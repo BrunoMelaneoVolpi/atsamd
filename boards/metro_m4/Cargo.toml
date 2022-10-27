@@ -57,10 +57,13 @@ lto = true
 [profile.release]
 debug = true
 lto = true
-opt-level = 3
+opt-level = 0       # x instead of 3 to allow for more debugging breakpoints... May lead to bigger file to flash: https://doc.rust-lang.org/cargo/reference/profiles.html#:~:text=0%3A%20no%20optimizations,off%20loop%20vectorization.
 
 [[example]]
 name = "blinky_basic"
+
+[[example]]
+name = "timer_interrupt"     #   "blinky_basic_2"         # "timer_interrupt"
 
 [[example]]
 name = "clock_out"

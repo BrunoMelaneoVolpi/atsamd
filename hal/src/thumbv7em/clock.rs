@@ -184,7 +184,12 @@ impl GenericClockController {
         oscctrl: &mut OSCCTRL,
         nvmctrl: &mut NVMCTRL,
     ) -> Self {
-        Self::new(gclk, mclk, osc32kctrl, oscctrl, nvmctrl, true)
+        Self::new(  gclk,
+                    mclk,
+                    osc32kctrl,
+                    oscctrl,
+                    nvmctrl,
+                    true)
     }
 
     fn new(

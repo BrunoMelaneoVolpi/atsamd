@@ -1,6 +1,6 @@
 # vim:ft=toml:
 [target.thumbv7em-none-eabihf]
-runner = 'probe-run --chip ATSAMD51J19A'
+runner = 'probe-run --chip ATSAMD51J19A' # --probe 1366:1008:Serial'
 
 [build]
 target = "thumbv7em-none-eabihf"
@@ -10,5 +10,6 @@ rustflags = [
    # See https://github.com/rust-embedded/cortex-m-quickstart/pull/95
    "-C", "link-arg=--nmagic",
 
-   "-C", "link-arg=-Tlink.x",
+   #"-C", "link-arg=-Tlink.x",
+   "-C", "link-arg=-Tlink.x", "-g"    # -g flag ensures that the release compilation keeps the debug symbols to allow using breakpoints and stepping through the source code.
 ]

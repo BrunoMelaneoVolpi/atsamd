@@ -24,3 +24,16 @@ $ cargo hf2 --release --example blinky_basic
     Finished in 0.079s
 $
 ```
+
+MELABR:
+The bootloader has been removed, so the memory file does not need to take it into account anymore:
+        MEMORY
+        {
+        FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 256K
+        RAM (xrw)  : ORIGIN = 0x20000000, LENGTH = 128K
+        }
+        _stack_start = ORIGIN(RAM) + LENGTH(RAM);
+
+Then you can use the following command to launch the application without the bootloader running:
+        cargo run --release --example blinky_basic
+

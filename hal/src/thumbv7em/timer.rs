@@ -130,54 +130,149 @@ where
         self.tc.count_16().intenclr.write(|w| w.ovf().set_bit());
     }
 }
-
-macro_rules! tc {
-    ($($TYPE:ident: ($TC:ident, $mclk:ident, $clock:ident, $apmask:ident),)+) => {
-        $(
-pub type $TYPE = TimerCounter<$TC>;
-
-impl Count16 for $TC {
+pub type TimerCounter2 = TimerCounter<TC2>;
+impl Count16 for TC2 {
     fn count_16(&self) -> &COUNT16 {
         self.count16()
     }
 }
-
-impl TimerCounter<$TC>
-{
+impl TimerCounter<TC2> {
     /// Configure this timer counter instance.
     /// The clock is obtained from the `GenericClockController` instance
     /// and its frequency impacts the resolution and maximum range of
     /// the timeout values that can be passed to the `start` method.
     /// Note that some hardware timer instances share the same clock
     /// generator instance and thus will be clocked at the same rate.
-    pub fn $mclk(clock: &clock::$clock, tc: $TC, mclk: &mut MCLK) -> Self {
-        // this is safe because we're constrained to just the tc3 bit
-        mclk.$apmask.modify(|_, w| w.$mclk().set_bit());
+    pub fn tc2_(clock: &clock::Tc2Tc3Clock, tc: TC2, mclk: &mut MCLK) -> Self {
+        mclk.apbbmask.modify(|_, w| w.tc2_().set_bit());
         {
             let count = tc.count16();
-
-            // Disable the timer while we reconfigure it
             count.ctrla.modify(|_, w| w.enable().clear_bit());
-            while count.status.read().perbufv().bit_is_set()  {}
+            while count.status.read().perbufv().bit_is_set() {}
         }
-        Self {
-            freq: clock.freq(),
-            tc,
-        }
+        Self { freq: clock.freq(), tc }
     }
 }
-        )+
+pub type TimerCounter3 = TimerCounter<TC3>;
+impl Count16 for TC3 {
+    fn count_16(&self) -> &COUNT16 {
+        self.count16()
     }
 }
-
-tc! {
-    TimerCounter2: (TC2, tc2_, Tc2Tc3Clock, apbbmask),
-    TimerCounter3: (TC3, tc3_, Tc2Tc3Clock, apbbmask),
+impl TimerCounter<TC3> {
+    /// Configure this timer counter instance.
+    /// The clock is obtained from the `GenericClockController` instance
+    /// and its frequency impacts the resolution and maximum range of
+    /// the timeout values that can be passed to the `start` method.
+    /// Note that some hardware timer instances share the same clock
+    /// generator instance and thus will be clocked at the same rate.
+    pub fn tc3_(clock: &clock::Tc2Tc3Clock, tc: TC3, mclk: &mut MCLK) -> Self {
+        mclk.apbbmask.modify(|_, w| w.tc3_().set_bit());
+        {
+            let count = tc.count16();
+            count.ctrla.modify(|_, w| w.enable().clear_bit());
+            while count.status.read().perbufv().bit_is_set() {}
+        }
+        Self { freq: clock.freq(), tc }
+    }
 }
+pub type TimerCounter4 = TimerCounter<TC4>;
+impl Count16 for TC4 {
+    fn count_16(&self) -> &COUNT16 {
+        self.count16()
+    }
+}
+impl TimerCounter<TC4> {
+    /// Configure this timer counter instance.
+    /// The clock is obtained from the `GenericClockController` instance
+    /// and its frequency impacts the resolution and maximum range of
+    /// the timeout values that can be passed to the `start` method.
+    /// Note that some hardware timer instances share the same clock
+    /// generator instance and thus will be clocked at the same rate.
+    pub fn tc4_(clock: &clock::Tc4Tc5Clock, tc: TC4, mclk: &mut MCLK) -> Self {
+        mclk.apbcmask.modify(|_, w| w.tc4_().set_bit());
+        {
+            let count = tc.count16();
+            count.ctrla.modify(|_, w| w.enable().clear_bit());
+            while count.status.read().perbufv().bit_is_set() {}
+        }
+        Self { freq: clock.freq(), tc }
+    }
 
-// Only the G variants are missing these timers
-#[cfg(feature = "min-samd51j")]
-tc! {
-    TimerCounter4: (TC4, tc4_, Tc4Tc5Clock, apbcmask),
-    TimerCounter5: (TC5, tc5_, Tc4Tc5Clock, apbcmask),
+    pub fn clear_all_irq(&self) {
+        let count = self.tc.count16();
+        count.intflag.modify(|_, w| w.ovf().set_bit());
+        count.intflag.modify(|_, w| w.err().set_bit());
+        count.intflag.modify(|_, w| w.mc0().set_bit());
+        count.intflag.modify(|_, w| w.mc1().set_bit());
+    }
+
+    pub fn clear_ovf_irq(&self) {
+        let count = self.tc.count16();
+        count.intflag.modify(|_, w| w.ovf().set_bit());
+        while count.intflag.read().ovf().bit_is_set() {}
+    }
+
+    pub fn clear_err_irq(&self) {
+        let count = self.tc.count16();
+        count.intflag.modify(|_, w| w.err().set_bit());
+        while count.intflag.read().err().bit_is_set() {}
+    }
+
+    pub fn clear_mc0_irq(&self) {
+        let count = self.tc.count16();
+        count.intflag.modify(|_, w| w.mc0().set_bit());
+        while count.intflag.read().mc0().bit_is_set() {}
+    }
+
+    pub fn clear_mc1_irq(&self) {
+        let count = self.tc.count16();
+        count.intflag.modify(|_, w| w.mc1().set_bit());
+        while count.intflag.read().mc1().bit_is_set() {}
+    }
+
+
+
+    pub fn is_ovf_int_flag_set(&self) -> bool {
+        let count = self.tc.count16();
+        count.intflag.read().ovf().bit_is_set()
+    }
+
+    pub fn is_err_int_flag_set(&self) -> bool {
+        let count = self.tc.count16();
+        count.intflag.read().err().bit_is_set()
+    }
+
+    pub fn is_mc0_int_flag_set(&self) -> bool {
+        let count = self.tc.count16();
+        count.intflag.read().mc0().bit_is_set()
+    }
+
+    pub fn is_mc1_int_flag_set(&self) -> bool {
+        let count = self.tc.count16();
+        count.intflag.read().mc1().bit_is_set()
+    }
+}
+pub type TimerCounter5 = TimerCounter<TC5>;
+impl Count16 for TC5 {
+    fn count_16(&self) -> &COUNT16 {
+        self.count16()
+    }
+}
+impl TimerCounter<TC5> {
+    /// Configure this timer counter instance.
+    /// The clock is obtained from the `GenericClockController` instance
+    /// and its frequency impacts the resolution and maximum range of
+    /// the timeout values that can be passed to the `start` method.
+    /// Note that some hardware timer instances share the same clock
+    /// generator instance and thus will be clocked at the same rate.
+    pub fn tc5_(clock: &clock::Tc4Tc5Clock, tc: TC5, mclk: &mut MCLK) -> Self {
+        mclk.apbcmask.modify(|_, w| w.tc5_().set_bit());
+        {
+            let count = tc.count16();
+            count.ctrla.modify(|_, w| w.enable().clear_bit());
+            while count.status.read().perbufv().bit_is_set() {}
+        }
+        Self { freq: clock.freq(), tc }
+    }
 }

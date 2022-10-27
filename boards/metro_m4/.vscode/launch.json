@@ -1,0 +1,108 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        // ####################################################################
+        //  Debugging using "probe-rs-debugger" VS Code extension as per:
+        //          https://probe.rs/docs/tools/vscode/
+        // ####################################################################
+        {
+            "preLaunchTask":            "Build blinky_basic",
+            "type":                     "probe-rs-debug",       //  Some of the following attributes relate to the typpe selected
+                                                                //  in this field.
+            "request":                  "launch",
+            "name":                     "Probe-Rs Debugging blinky_basic",
+            "cwd":                      "${workspaceFolder}",   //https://code.visualstudio.com/docs/editor/variables-reference#_predefined-variables
+            "chip":                     "ATSAMD51J19A",
+            "connectUnderReset":        false,
+            "flashingConfig": {
+                "flashingEnabled":      true,
+                "resetAfterFlashing":   true,
+                "haltAfterReset":       true                    //  Target waits for the user to press Continue (F5 / 'play' button)
+                                                                //  on the debug user interface.
+            },
+            "coreConfigs": [
+                {
+                    "coreIndex":        0,
+                    "programBinary":    "./target/thumbv7em-none-eabihf/release/examples/blinky_basic",
+                    "svdFile":          "../../svd/ATSAMD51J19A.svd",
+                    "rttEnabled":       true,
+                    "options": {
+                        "env": {
+                            "DEFMT_LOG": "debug"
+                        }
+                    }
+                }
+            ],
+            "consoleLogLevel": "Info", //Error, Warn, Info, Debug, Trace
+            //  "Ctrl + Space" for more attributes.
+            //  "postDebugTask":        "Reset Target"              //  Commented out in tasks.jason.
+        },
+        {
+            "preLaunchTask":            "Build timer_interrupt",
+            "type":                     "probe-rs-debug",       //  Some of the following attributes relate to the typpe selected
+                                                                //  in this field.
+            "request":                  "launch",
+            "name":                     "Probe-Rs Debugging timer_interrupt",
+            "cwd":                      "${workspaceFolder}",   //https://code.visualstudio.com/docs/editor/variables-reference#_predefined-variables
+            "chip":                     "ATSAMD51J19A",
+            "connectUnderReset":        false,
+            "flashingConfig": {
+                "flashingEnabled":      true,
+                "resetAfterFlashing":   true,
+                "haltAfterReset":       true                    //  Target waits for the user to press Continue (F5 / 'play' button)
+                                                                //  on the debug user interface.
+            },
+            "coreConfigs": [
+                {
+                    "coreIndex":        0,
+                    "programBinary":    "./target/thumbv7em-none-eabihf/release/examples/timer_interrupt",
+                    "svdFile":          "../../svd/ATSAMD51J19A.svd",
+                    "rttEnabled":       true,
+                    "options": {
+                        "env": {
+                            "DEFMT_LOG": "debug"
+                        }
+                    }
+                }
+            ],
+            "consoleLogLevel": "Info", //Error, Warn, Info, Debug, Trace
+            //  "Ctrl + Space" for more attributes.
+            //  "postDebugTask":        "Reset Target"              //  Commented out in tasks.jason.
+        },
+        {
+            "preLaunchTask":            "Build timer_example",
+            "type":                     "probe-rs-debug",       //  Some of the following attributes relate to the typpe selected
+                                                                //  in this field.
+            "request":                  "launch",
+            "name":                     "Probe-Rs Debugging timer_example",
+            "cwd":                      "${workspaceFolder}",   //https://code.visualstudio.com/docs/editor/variables-reference#_predefined-variables
+            "chip":                     "ATSAMD51J19A",
+            "connectUnderReset":        false,
+            "flashingConfig": {
+                "flashingEnabled":      true,
+                "resetAfterFlashing":   true,
+                "haltAfterReset":       true                    //  Target waits for the user to press Continue (F5 / 'play' button)
+                                                                //  on the debug user interface.
+            },
+            "coreConfigs": [
+                {
+                    "coreIndex":        0,
+                    "programBinary":    "./target/thumbv7em-none-eabihf/release/examples/timer",
+                    "svdFile":          "../../svd/ATSAMD51J19A.svd",
+                    "rttEnabled":       true,
+                    "options": {
+                        "env": {
+                            "DEFMT_LOG": "debug"
+                        }
+                    }
+                }
+            ],
+            "consoleLogLevel": "Info", //Error, Warn, Info, Debug, Trace
+            //  "Ctrl + Space" for more attributes.
+            //  "postDebugTask":        "Reset Target"              //  Commented out in tasks.jason.
+        },
+    ]
+}

@@ -20,6 +20,10 @@ use pac::{CorePeripherals, Peripherals};
 use ehal::blocking::delay::DelayMs;
 use hal::delay::Delay;
 
+use rtt_target::{rprintln, rtt_init_print};
+use core::sync::atomic::{AtomicUsize, Ordering};
+
+
 #[entry]
 fn main() -> ! {
     let mut peripherals = Peripherals::take().unwrap();
@@ -33,11 +37,27 @@ fn main() -> ! {
     );
     let pins = bsp::Pins::new(peripherals.PORT);
     let mut red_led = pins.d13.into_push_pull_output();
+
+
     let mut delay = Delay::new(core.SYST, &mut clocks);
+
+//    let delay_at_low_lvl: u16 = 50u16;
+    let delay_at_low_lvl: u16 = 100u16;
+
+    rtt_init_print!();
+    rprintln!("================");
+
     loop {
-        delay.delay_ms(200u8);
+        static COUNTER: AtomicUsize = AtomicUsize::new(0);
+        rprintln!("Hello, world! {}", COUNTER.fetch_add(1, Ordering::Relaxed) );
+
+        delay.delay_ms(1000u16);
         red_led.set_high().unwrap();
-        delay.delay_ms(200u8);
+        delay.delay_ms(delay_at_low_lvl);
+        red_led.set_low().unwrap();
+        delay.delay_ms(delay_at_low_lvl);
+        red_led.set_high().unwrap();
+        delay.delay_ms(delay_at_low_lvl);
         red_led.set_low().unwrap();
     }
 }
