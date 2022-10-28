@@ -21,7 +21,7 @@ use pac::{  interrupt,
             CorePeripherals,
             Peripherals,
             TC4,
-            DAC_OTHER,      //  ToDo: fix "error[E0603]: function `DAC_OTHER` is private"
+//            DAC_OTHER,      //  ToDo: fix "error[E0603]: function `DAC_OTHER` is private"
         //    DAC_EMPTY_0,
         //    DAC_EMPTY_1,
         //    DAC_RESRDY_0,
@@ -102,16 +102,19 @@ fn main() -> ! {
 
 
     //  Inidialise the dac..
-    let dac0 =
+    let (dac, dac0, dac1) =
         Dac::init(   &mut peripherals.MCLK,
                     peripherals.DAC);
+    dac0.enable(&mut dac);
     //  Enable dac
-    dac0.enable_dac_controller();
+    dac.enable_dac_controller();
     //  Chnage the dac DATA register to start a new conversion...
-    dac0.start_conversion(0);
+  //  dac0.start_conversion(0);
+
+
 
     //  Enable Interrupts
-
+    //  Todo...
 
 
 
@@ -162,6 +165,18 @@ fn main() -> ! {
 
 
 
+
+#[interrupt]
+fn TC4() {
+    //  Give some feedback in the terminal
+    rprint!(" DAC_OTHER interrupt ");
+
+    /*  Execute closure in critical section...   */
+    cortex_m::interrupt::free(|cs| {
+
+
+    })
+}
 
 #[interrupt]
 fn DAC_OTHER() {
