@@ -63,6 +63,9 @@ opt-level = 0       # x instead of 3 to allow for more debugging breakpoints... 
 name = "blinky_basic"
 
 [[example]]
+name = "dac"
+
+[[example]]
 name = "timer_interrupt"     #   "blinky_basic_2"         # "timer_interrupt"
 
 [[example]]

@@ -48,6 +48,15 @@
             "group": "build"
         },
         {
+            "label": "Build dac",
+            "type": "shell",
+            "command": "cargo build --release --example dac",
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": "build"
+        },
+        {
             "label": "Build timer_example",
             "type": "shell",
             "command": "cargo build --release --example timer",

@@ -7,6 +7,9 @@ pub mod qspi;
 pub mod timer;
 pub mod trng;
 
+pub mod dac;
+
+
 #[cfg(feature = "usb")]
 pub mod usb;
 

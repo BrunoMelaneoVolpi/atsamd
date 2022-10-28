@@ -965,7 +965,11 @@ pub fn spi_master(
     let freq = clock.freq();
     let (miso, mosi, sclk) = (miso.into(), mosi.into(), sclk.into());
     let pads = spi::Pads::default().data_in(miso).data_out(mosi).sclk(sclk);
-    spi::Config::new(mclk, sercom, pads, freq)
+    spi::Config::new(
+        mclk,
+        sercom,
+        pads,
+        freq)
         .baud(baud)
         .spi_mode(spi::MODE_0)
         .enable()
