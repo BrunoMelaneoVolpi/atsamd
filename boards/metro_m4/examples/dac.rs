@@ -72,15 +72,17 @@ fn main() -> ! {
     //todo!();
 
 
-    //  instantiate Timer 4
-    let gclk0 = gen_clcks.gclk0();
-    let tc4 = gen_clcks.tc4_tc5(&gclk0).unwrap();
-    let mut timer_4 =
-        TimerCounter::<TC4>::tc4_(
-            &tc4,                   //  &clock::Tc4Tc5Clock
-            peripherals.TC4,        //  TC4
-            &mut peripherals.MCLK   //  MCLK
-        );
+
+    // PA02 :: Dac Vout0: LED_T_CTRL_BF: Bright temperature control
+    // PA05 :: Dac Vout1: LED_T_CTRL_DF: Darkfield temperature control
+    let pins = bsp::Pins::new(peripherals.PORT);
+    let dac_0_out_pin =
+        pins.a0.into_alternate::<B>();
+    let dac_1_out_pin =
+        pins.a5.into_alternate::<B>();
+
+
+
 
     //  Configure the interrupt controller
     unsafe {
@@ -98,47 +100,25 @@ fn main() -> ! {
     }
 
 
-
-
-
-    //  Inidialise the dac..
-    let (mut dac, dac0, _dac1) =
+    //  Initialise the overall perhipheral...
+    let (mut dac, mut dac0, mut dac1) =
         Dac::init(   &mut peripherals.MCLK,
                     peripherals.DAC);
 
-    //  Enable dac
+    //  Enable overall controller (which include two DAC units)
     dac = dac.enable_dac_controller();
-    //  Change the dac0 DATA register to start a new conversion...
-    dac0.start_conversion(&mut dac);
 
-
+    //  Make sure DACs are ready
+    dac0 = dac0.wait_ready(&mut dac);
+    dac1 = dac1.wait_ready(&mut dac);
 
     //  Enable Interrupts
-    //  Todo...
+    dac = dac.enable_dac_interrupts();
 
+    //  Change the DATA register to start a new conversion...
+    dac0.start_conversion(&mut dac, 0x1234);
+    dac1.start_conversion(&mut dac, 0x1234);
 
-
-
-    // PA02 :: Dac Vout0: LED_T_CTRL_BF: Bright temperature control
-    // PA05 :: Dac Vout1: LED_T_CTRL_DF: Darkfield temperature control
-    let pins = bsp::Pins::new(peripherals.PORT);
-    let dac_0_out_pin =
-        pins.a0.into_alternate::<B>();
-    let dac_1_out_pin =
-        pins.a5.into_alternate::<B>();
-
-
-
-
-//    //  Select and set the Pin we need...
-//    let pins = bsp::Pins::new(peripherals.PORT);
-//    let red_led = pins.d13.into_push_pull_output();
-//
-//    //  Store red_led in the GLOBAL LED so it can be
-//    //  accessed from the interrupt ISR
-//    cortex_m::interrupt::free(|cs| {
-//        G_LED.borrow(cs).replace(Some(red_led));
-//    });
 
 
 

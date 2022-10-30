@@ -4,6 +4,7 @@ use core::marker::PhantomData;
 
 use crate::pac::{DAC, MCLK};
 //use crate::pac::{DAC_OTHER, TC5};
+//use crate::pac::{Interrupt};
 
 pub trait DacInstance {
     const INDEX: usize;
@@ -47,9 +48,9 @@ impl<I: DacInstance> DacUnit<I> {
     }
 
 
-    pub fn start_conversion(self, dac: &mut Dac) -> Self {
+    pub fn start_conversion(self, dac: &mut Dac, data: u16) -> Self {
 
-        dac.0.data[I::INDEX].write(|w| unsafe { w.bits(0x1234) });
+        dac.0.data[I::INDEX].write(|w| unsafe { w.bits(data) });
 
         if 0 == I::INDEX {
             while dac.0.syncbusy.read().data0().bit_is_set() {}
@@ -60,6 +61,26 @@ impl<I: DacInstance> DacUnit<I> {
         self
     }
 
+    pub fn wait_ready(self, dac: &mut Dac) -> Self {
+        /*  Once the DAC Controller is enabled, DACx requires a startup time
+            before the first conversion can start. The DACx
+            Startup Ready bit in the Status register (STATUS.READYx) indicates
+            that DACx is ready to convert a data when
+            STATUS.READYx=1.
+            Conversions started while STATUS.READYx=0 shall be discarded. */
+
+        /*  NOT SURE we should trap the processor here waiting for the
+            unit to be ready... but maybe it is ok if is only done once
+            during initialization.      */
+
+        if 0 == I::INDEX {
+            while dac.0.status.read().ready0().bit_is_clear(){}
+        } else {
+            while dac.0.status.read().ready1().bit_is_clear(){}
+        }
+
+        self
+    }
 }
 
 impl Dac {
@@ -83,18 +104,21 @@ impl Dac {
         self.0.ctrla.modify(|_, w| w.enable().set_bit());
         while self.0.syncbusy.read().enable().bit_is_set() {}
 
+        self
+    }
 
-        //  Once the DAC Controller is enabled, DACx requires a startup time
-        //  before the first conversion can start. The DACx
-        //  Startup Ready bit in the Status register (STATUS.READYx) indicates
-        //  that DACx is ready to convert a data when
-        //  STATUS.READYx=1.
-        //  Conversions started while STATUS.READYx=0 shall be discarded.
-    /*
-        if STATUS.READYx
-            start conversion
-    */
-
+    pub fn enable_dac_interrupts(self) -> Self {
+        /*  Enable all interrupts for now...    */
+        self.0.intenset.modify(
+            |_, w| w
+            .overrun0().set_bit()
+            .overrun1().set_bit()
+            .resrdy0().set_bit()
+            .resrdy1().set_bit()
+            .empty0().set_bit()
+            .empty1().set_bit()
+            .underrun0().set_bit()
+            .underrun1().set_bit());
 
         self
     }
