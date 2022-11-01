@@ -15,12 +15,11 @@ use panic_semihosting as _;
 use bsp::entry;
 use bsp::Pins;
 use hal::clock::GenericClockController;
-use hal::prelude::*;
+//use hal::prelude::*;
 use hal::dac::Dac;
 use pac::{  interrupt,
             CorePeripherals,
             Peripherals,
-            TC4,
         };
 
 
@@ -33,18 +32,13 @@ use core::{
     cell::RefCell,
 };
 
-use atsamd_hal::time::U32Ext;
-
-//use hal::timer::TimerCounter4;
-use hal::timer::TimerCounter;
-//use hal::timer::Count16;
-use cortex_m::peripheral::NVIC;
+//use cortex_m::peripheral::NVIC;
 
 use cortex_m::{interrupt::Mutex};
-use crate::pac::gclk::genctrl::SRC_A::DFLL;
-use pac::gclk::pchctrl::GEN_A::GCLK0;   //  Cyclops has a centralized
-                                        //  point where all clock are setup...
-                                        //  Make sure the clock is correct...
+//use crate::pac::gclk::genctrl::SRC_A::DFLL;
+//use pac::gclk::pchctrl::GEN_A::GCLK0;   //  Cyclops has a centralized
+//                                        //  point where all clock are setup...
+//                                        //  Make sure the clock is correct...
 
 
 //static G_LED: Mutex<RefCell<Option<   hal::gpio::Pin<hal::gpio::PA16, hal::gpio::PushPullOutput>   >>> = Mutex::new(RefCell::new(None));
@@ -65,45 +59,29 @@ fn main() -> ! {
             &mut peripherals.NVMCTRL,
     );
 
-    //  ToDo:   Make sure the generic clock "GCLK_DAC" has been properly...
-    //let dac_clock =
-    //    gen_clcks.configure_gclk_divider_and_source(GCLK0,
-    //         1, DFLL, false);
-    //todo!();
-
-
+    //  ToDo: configure pins properly
+    //  todo!();
 
     // PA02 :: Dac Vout0: LED_T_CTRL_BF: Bright temperature control
     // PA05 :: Dac Vout1: LED_T_CTRL_DF: Darkfield temperature control
+    //  LED_T_CTRL_BF: DAC_VOUT0: PA02
+    //  LED_T_CTRL_DF: DAC_VOUT1: PA11
     let pins = bsp::Pins::new(peripherals.PORT);
+
     let dac_0_out_pin =
         pins.a0.into_alternate::<B>();
     let dac_1_out_pin =
-        pins.a5.into_alternate::<B>();
-
-
-
-
-    //  Configure the interrupt controller
-    unsafe {
-        core.NVIC.set_priority(interrupt::DAC_OTHER     , 1);
-        core.NVIC.set_priority(interrupt::DAC_EMPTY_0   , 1);
-        core.NVIC.set_priority(interrupt::DAC_EMPTY_1   , 1);
-        core.NVIC.set_priority(interrupt::DAC_RESRDY_0  , 1);
-        core.NVIC.set_priority(interrupt::DAC_RESRDY_1  , 1);
-
-        NVIC::unmask(interrupt::DAC_OTHER   );
-        NVIC::unmask(interrupt::DAC_EMPTY_0 );
-        NVIC::unmask(interrupt::DAC_EMPTY_1 );
-        NVIC::unmask(interrupt::DAC_RESRDY_0);
-        NVIC::unmask(interrupt::DAC_RESRDY_1);
-    }
+        pins.a1.into_alternate::<B>();
 
 
     //  Initialise the overall perhipheral...
     let (mut dac, mut dac0, mut dac1) =
         Dac::init(   &mut peripherals.MCLK,
-                    peripherals.DAC);
+                    peripherals.DAC,
+                    &mut gen_clcks);
+
+    //  Enable Interrupts
+//    dac = dac.enable_dac_interrupts(&mut core.NVIC);
 
     //  Enable overall controller (which include two DAC units)
     dac = dac.enable_dac_controller();
@@ -112,15 +90,12 @@ fn main() -> ! {
     dac0 = dac0.wait_ready(&mut dac);
     dac1 = dac1.wait_ready(&mut dac);
 
-    //  Enable Interrupts
-    dac = dac.enable_dac_interrupts();
+
 
     //  Change the DATA register to start a new conversion...
-    dac0.start_conversion(&mut dac, 0x1234);
-    dac1.start_conversion(&mut dac, 0x1234);
-
-
-
+    let mut data_x : u16 = 0x0123;
+    dac0 = dac0.start_conversion(&mut dac, data_x);
+    dac1 = dac1.start_conversion(&mut dac, data_x);
 
 
     /*  Initialise remote print...   */
@@ -129,9 +104,34 @@ fn main() -> ! {
 
     //  Delay to be used in the loop...
     let mut delay = Delay::new(core.SYST, &mut gen_clcks);
+
+    const INCREMENT: u16 = 100;
+    let mut increment: bool = false;
+    data_x = 0;
+
     loop {
-        rprintln!("Hello, world!");
-        delay.delay_ms(1000u16);
+
+        if (2 * INCREMENT) > data_x {
+            increment = true;
+        }
+        else {
+            if (u16::pow(2, 12) - (2 * INCREMENT)) < data_x {
+                increment = false;
+            }
+        }
+
+        if true == increment {
+            data_x = data_x + INCREMENT;
+        }else{
+            data_x = data_x - INCREMENT;
+        }
+
+        rprintln!("data_x = {} ( {} to reach {} )", data_x, u16::pow(2, 12) - data_x, u16::pow(2, 12));
+
+        dac0 = dac0.start_conversion(&mut dac, data_x);
+        dac1 = dac1.start_conversion(&mut dac, data_x);
+
+        delay.delay_ms(100u16);
     }
 }
 

@@ -338,15 +338,75 @@ impl GenericClockController {
     }
 }
 
-macro_rules! clock_generator {
-    (
-        $(
-            $(#[$attr:meta])*
-            ($id:ident, $Type:ident, $clock:ident),
-        )+
-    ) => {
-
-$(
+//macro_rules! clock_generator {
+//    (
+//        $(
+//            $(#[$attr:meta])*
+//            ($id:ident, $Type:ident, $clock:ident),
+//        )+
+//    ) => {
+//
+//$(
+//
+///// A typed token that indicates that the clock for the peripheral(s)
+///// with the matching name has been configured.
+///// The effective clock frequency is available via the `freq` method,
+///// or by converting the object into a `Hertz` instance.
+///// The peripheral initialization code will typically require passing
+///// in this object to prove at compile time that the clock has been
+///// correctly initialized.
+//$(#[$attr])*
+//#[derive(Debug)]
+//pub struct $Type {
+//    freq: Hertz,
+//}
+//
+//$(#[$attr])*
+//impl $Type {
+//    /// Returns the frequency of the configured clock
+//    pub fn freq(&self) -> Hertz {
+//        self.freq
+//    }
+//}
+//$(#[$attr])*
+//impl Into<Hertz> for $Type {
+//    fn into(self) -> Hertz {
+//        self.freq
+//    }
+//}
+//)+
+//
+//impl GenericClockController {
+//    $(
+//    /// Configure the clock for peripheral(s) that match the name
+//    /// of this function to use the specific clock generator.
+//    /// The `GClock` parameter may be one of default clocks
+//    /// return from `gclk0()`, `gclk1()` or a clock configured
+//    /// by the host application using the `configure_gclk_divider_and_source`
+//    /// method.
+//    /// Returns a typed token that proves that the clock has been configured;
+//    /// the peripheral initialization code will typically require that this
+//    /// clock token be passed in to ensure that the clock has been initialized
+//    /// appropriately.
+//    /// Returns `None` is the specified generic clock has already been
+//    /// configured.
+//    $(#[$attr])*
+//    pub fn $id(&mut self, generator: &GClock) -> Option<$Type> {
+//        let bits: u64 = 1 << u8::from(ClockId::$clock) as u64;
+//        if (self.used_clocks & bits) != 0 {
+//            return None;
+//        }
+//        self.used_clocks |= bits;
+//
+//        self.state.enable_clock_generator(ClockId::$clock, generator.gclk);
+//        let freq = self.gclks[u8::from(generator.gclk) as usize];
+//        Some($Type{freq})
+//    }
+//    )+
+//}
+//    }
+//}
+//////////// melabr
 
 /// A typed token that indicates that the clock for the peripheral(s)
 /// with the matching name has been configured.
@@ -355,29 +415,966 @@ $(
 /// The peripheral initialization code will typically require passing
 /// in this object to prove at compile time that the clock has been
 /// correctly initialized.
-$(#[$attr])*
-#[derive(Debug)]
-pub struct $Type {
+pub struct Tc0Tc1Clock {
     freq: Hertz,
 }
-
-$(#[$attr])*
-impl $Type {
+#[automatically_derived]
+impl ::core::fmt::Debug for Tc0Tc1Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Tc0Tc1Clock", "freq", &&self.freq)
+    }
+}
+impl Tc0Tc1Clock {
     /// Returns the frequency of the configured clock
-    pub fn freq(&self) -> Hertz {
-        self.freq
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Tc0Tc1Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Tcc0Tcc1Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Tcc0Tcc1Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Tcc0Tcc1Clock",            "freq", &&self.freq)
     }
 }
-$(#[$attr])*
-impl Into<Hertz> for $Type {
-    fn into(self) -> Hertz {
-        self.freq
+impl Tcc0Tcc1Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Tcc0Tcc1Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Tc2Tc3Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Tc2Tc3Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Tc2Tc3Clock",            "freq", &&self.freq)
     }
 }
-)+
-
+impl Tc2Tc3Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Tc2Tc3Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Tcc2Tcc3Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Tcc2Tcc3Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Tcc2Tcc3Clock",            "freq", &&self.freq)
+    }
+}
+impl Tcc2Tcc3Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Tcc2Tcc3Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Tc4Tc5Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Tc4Tc5Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Tc4Tc5Clock",            "freq", &&self.freq)
+    }
+}
+impl Tc4Tc5Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Tc4Tc5Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Tcc4Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Tcc4Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Tcc4Clock",            "freq", &&self.freq)
+    }
+}
+impl Tcc4Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Tcc4Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Tc6Tc7Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Tc6Tc7Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Tc6Tc7Clock",            "freq", &&self.freq)
+    }
+}
+impl Tc6Tc7Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Tc6Tc7Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Sercom0CoreClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Sercom0CoreClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f,            "Sercom0CoreClock", "freq", &&self.freq)
+    }
+}
+impl Sercom0CoreClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Sercom0CoreClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Sercom1CoreClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Sercom1CoreClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f,            "Sercom1CoreClock", "freq", &&self.freq)
+    }
+}
+impl Sercom1CoreClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Sercom1CoreClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Sercom2CoreClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Sercom2CoreClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f,            "Sercom2CoreClock", "freq", &&self.freq)
+    }
+}
+impl Sercom2CoreClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Sercom2CoreClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Sercom3CoreClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Sercom3CoreClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f,            "Sercom3CoreClock", "freq", &&self.freq)
+    }
+}
+impl Sercom3CoreClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Sercom3CoreClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Sercom4CoreClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Sercom4CoreClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f,            "Sercom4CoreClock", "freq", &&self.freq)
+    }
+}
+impl Sercom4CoreClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Sercom4CoreClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Sercom5CoreClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Sercom5CoreClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f,            "Sercom5CoreClock", "freq", &&self.freq)
+    }
+}
+impl Sercom5CoreClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Sercom5CoreClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct UsbClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for UsbClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "UsbClock",            "freq", &&self.freq)
+    }
+}
+impl UsbClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for UsbClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Adc0Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Adc0Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Adc0Clock",            "freq", &&self.freq)
+    }
+}
+impl Adc0Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Adc0Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Adc1Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Adc1Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Adc1Clock",            "freq", &&self.freq)
+    }
+}
+impl Adc1Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Adc1Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct EicClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for EicClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "EicClock",            "freq", &&self.freq)
+    }
+}
+impl EicClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for EicClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct FreqmMsrClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for FreqmMsrClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "FreqmMsrClock",            "freq", &&self.freq)
+    }
+}
+impl FreqmMsrClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for FreqmMsrClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct FreqmRefClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for FreqmRefClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "FreqmRefClock",            "freq", &&self.freq)
+    }
+}
+impl FreqmRefClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for FreqmRefClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Evsys0Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Evsys0Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Evsys0Clock",            "freq", &&self.freq)
+    }
+}
+impl Evsys0Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Evsys0Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Evsys1Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Evsys1Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Evsys1Clock",            "freq", &&self.freq)
+    }
+}
+impl Evsys1Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Evsys1Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Evsys2Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Evsys2Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Evsys2Clock",            "freq", &&self.freq)
+    }
+}
+impl Evsys2Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Evsys2Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Evsys3Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Evsys3Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Evsys3Clock",            "freq", &&self.freq)
+    }
+}
+impl Evsys3Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Evsys3Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Evsys4Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Evsys4Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Evsys4Clock",            "freq", &&self.freq)
+    }
+}
+impl Evsys4Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Evsys4Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Evsys5Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Evsys5Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Evsys5Clock",            "freq", &&self.freq)
+    }
+}
+impl Evsys5Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Evsys5Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Evsys6Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Evsys6Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Evsys6Clock",            "freq", &&self.freq)
+    }
+}
+impl Evsys6Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Evsys6Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Evsys7Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Evsys7Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Evsys7Clock",            "freq", &&self.freq)
+    }
+}
+impl Evsys7Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Evsys7Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Evsys8Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Evsys8Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Evsys8Clock",            "freq", &&self.freq)
+    }
+}
+impl Evsys8Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Evsys8Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Evsys9Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Evsys9Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Evsys9Clock",            "freq", &&self.freq)
+    }
+}
+impl Evsys9Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Evsys9Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Evsys10Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Evsys10Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Evsys10Clock",            "freq", &&self.freq)
+    }
+}
+impl Evsys10Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Evsys10Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Evsys11Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Evsys11Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Evsys11Clock",            "freq", &&self.freq)
+    }
+}
+impl Evsys11Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Evsys11Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Can0Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Can0Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Can0Clock",            "freq", &&self.freq)
+    }
+}
+impl Can0Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Can0Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Can1Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Can1Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Can1Clock",            "freq", &&self.freq)
+    }
+}
+impl Can1Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Can1Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct PdecClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for PdecClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "PdecClock",            "freq", &&self.freq)
+    }
+}
+impl PdecClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for PdecClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct AcClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for AcClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "AcClock",            "freq", &&self.freq)
+    }
+}
+impl AcClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for AcClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct CclClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for CclClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "CclClock",            "freq", &&self.freq)
+    }
+}
+impl CclClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for CclClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct DacClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for DacClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "DacClock",            "freq", &&self.freq)
+    }
+}
+impl DacClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for DacClock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct I2S0Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for I2S0Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "I2S0Clock",            "freq", &&self.freq)
+    }
+}
+impl I2S0Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for I2S0Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct I2S1Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for I2S1Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "I2S1Clock",            "freq", &&self.freq)
+    }
+}
+impl I2S1Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for I2S1Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Sdhc0Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Sdhc0Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Sdhc0Clock",            "freq", &&self.freq)
+    }
+}
+impl Sdhc0Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Sdhc0Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Sdhc1Clock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Sdhc1Clock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Sdhc1Clock",            "freq", &&self.freq)
+    }
+}
+impl Sdhc1Clock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Sdhc1Clock {
+    fn into(self) -> Hertz { self.freq }
+}
+/// A typed token that indicates that the clock for the peripheral(s)
+/// with the matching name has been configured.
+/// The effective clock frequency is available via the `freq` method,
+/// or by converting the object into a `Hertz` instance.
+/// The peripheral initialization code will typically require passing
+/// in this object to prove at compile time that the clock has been
+/// correctly initialized.
+pub struct Cm4TraceClock {
+    freq: Hertz,
+}
+#[automatically_derived]
+impl ::core::fmt::Debug for Cm4TraceClock {
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+        Ok(())  //  HACK! melabr        // ::core::fmt::Formatter::debug_struct_field1_finish(f, "Cm4TraceClock",            "freq", &&self.freq)
+    }
+}
+impl Cm4TraceClock {
+    /// Returns the frequency of the configured clock
+    pub fn freq(&self) -> Hertz { self.freq }
+}
+impl Into<Hertz> for Cm4TraceClock {
+    fn into(self) -> Hertz { self.freq }
+}
 impl GenericClockController {
-    $(
     /// Configure the clock for peripheral(s) that match the name
     /// of this function to use the specific clock generator.
     /// The `GClock` parameter may be one of default clocks
@@ -390,71 +1387,897 @@ impl GenericClockController {
     /// appropriately.
     /// Returns `None` is the specified generic clock has already been
     /// configured.
-    $(#[$attr])*
-    pub fn $id(&mut self, generator: &GClock) -> Option<$Type> {
-        let bits: u64 = 1 << u8::from(ClockId::$clock) as u64;
-        if (self.used_clocks & bits) != 0 {
-            return None;
-        }
+    pub fn tc0_tc1(&mut self, generator: &GClock) -> Option<Tc0Tc1Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::TC0_TC1) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
         self.used_clocks |= bits;
-
-        self.state.enable_clock_generator(ClockId::$clock, generator.gclk);
+        self.state.enable_clock_generator(ClockId::TC0_TC1, generator.gclk);
         let freq = self.gclks[u8::from(generator.gclk) as usize];
-        Some($Type{freq})
+        Some(Tc0Tc1Clock { freq })
     }
-    )+
-}
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn tcc0_tcc1(&mut self, generator: &GClock) -> Option<Tcc0Tcc1Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::TCC0_TCC1) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::TCC0_TCC1, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Tcc0Tcc1Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn tc2_tc3(&mut self, generator: &GClock) -> Option<Tc2Tc3Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::TC2_TC3) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::TC2_TC3, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Tc2Tc3Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn tcc2_tcc3(&mut self, generator: &GClock) -> Option<Tcc2Tcc3Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::TCC2_TCC3) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::TCC2_TCC3, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Tcc2Tcc3Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn tc4_tc5(&mut self, generator: &GClock) -> Option<Tc4Tc5Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::TC4_TC5) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::TC4_TC5, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Tc4Tc5Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn tcc4(&mut self, generator: &GClock) -> Option<Tcc4Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::TCC4) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::TCC4, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Tcc4Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn tc6_tc7(&mut self, generator: &GClock) -> Option<Tc6Tc7Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::TC6_TC7) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::TC6_TC7, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Tc6Tc7Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn sercom0_core(&mut self, generator: &GClock)
+        -> Option<Sercom0CoreClock> {
+        let bits: u64 = 1 << u8::from(ClockId::SERCOM0_CORE) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::SERCOM0_CORE,
+            generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Sercom0CoreClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn sercom1_core(&mut self, generator: &GClock)
+        -> Option<Sercom1CoreClock> {
+        let bits: u64 = 1 << u8::from(ClockId::SERCOM1_CORE) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::SERCOM1_CORE,
+            generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Sercom1CoreClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn sercom2_core(&mut self, generator: &GClock)
+        -> Option<Sercom2CoreClock> {
+        let bits: u64 = 1 << u8::from(ClockId::SERCOM2_CORE) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::SERCOM2_CORE,
+            generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Sercom2CoreClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn sercom3_core(&mut self, generator: &GClock)
+        -> Option<Sercom3CoreClock> {
+        let bits: u64 = 1 << u8::from(ClockId::SERCOM3_CORE) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::SERCOM3_CORE,
+            generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Sercom3CoreClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn sercom4_core(&mut self, generator: &GClock)
+        -> Option<Sercom4CoreClock> {
+        let bits: u64 = 1 << u8::from(ClockId::SERCOM4_CORE) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::SERCOM4_CORE,
+            generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Sercom4CoreClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn sercom5_core(&mut self, generator: &GClock)
+        -> Option<Sercom5CoreClock> {
+        let bits: u64 = 1 << u8::from(ClockId::SERCOM5_CORE) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::SERCOM5_CORE,
+            generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Sercom5CoreClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn usb(&mut self, generator: &GClock) -> Option<UsbClock> {
+        let bits: u64 = 1 << u8::from(ClockId::USB) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::USB, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(UsbClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn adc0(&mut self, generator: &GClock) -> Option<Adc0Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::ADC0) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::ADC0, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Adc0Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn adc1(&mut self, generator: &GClock) -> Option<Adc1Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::ADC1) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::ADC1, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Adc1Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn eic(&mut self, generator: &GClock) -> Option<EicClock> {
+        let bits: u64 = 1 << u8::from(ClockId::EIC) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::EIC, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(EicClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn freq_m_msr(&mut self, generator: &GClock)
+        -> Option<FreqmMsrClock> {
+        let bits: u64 = 1 << u8::from(ClockId::FREQM_MSR) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::FREQM_MSR, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(FreqmMsrClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn freq_m_ref(&mut self, generator: &GClock)
+        -> Option<FreqmRefClock> {
+        let bits: u64 = 1 << u8::from(ClockId::FREQM_REF) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::FREQM_REF, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(FreqmRefClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn evsys0(&mut self, generator: &GClock) -> Option<Evsys0Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::EVSYS0) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::EVSYS0, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Evsys0Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn evsys1(&mut self, generator: &GClock) -> Option<Evsys1Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::EVSYS1) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::EVSYS1, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Evsys1Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn evsys2(&mut self, generator: &GClock) -> Option<Evsys2Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::EVSYS2) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::EVSYS2, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Evsys2Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn evsys3(&mut self, generator: &GClock) -> Option<Evsys3Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::EVSYS3) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::EVSYS3, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Evsys3Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn evsys4(&mut self, generator: &GClock) -> Option<Evsys4Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::EVSYS4) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::EVSYS4, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Evsys4Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn evsys5(&mut self, generator: &GClock) -> Option<Evsys5Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::EVSYS5) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::EVSYS5, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Evsys5Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn evsys6(&mut self, generator: &GClock) -> Option<Evsys6Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::EVSYS6) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::EVSYS6, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Evsys6Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn evsys7(&mut self, generator: &GClock) -> Option<Evsys7Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::EVSYS7) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::EVSYS7, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Evsys7Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn evsys8(&mut self, generator: &GClock) -> Option<Evsys8Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::EVSYS8) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::EVSYS8, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Evsys8Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn evsys9(&mut self, generator: &GClock) -> Option<Evsys9Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::EVSYS9) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::EVSYS9, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Evsys9Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn evsys10(&mut self, generator: &GClock) -> Option<Evsys10Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::EVSYS10) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::EVSYS10, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Evsys10Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn evsys11(&mut self, generator: &GClock) -> Option<Evsys11Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::EVSYS11) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::EVSYS11, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Evsys11Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn can0(&mut self, generator: &GClock) -> Option<Can0Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::CAN0) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::CAN0, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Can0Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn can1(&mut self, generator: &GClock) -> Option<Can1Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::CAN1) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::CAN1, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Can1Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn pdec(&mut self, generator: &GClock) -> Option<PdecClock> {
+        let bits: u64 = 1 << u8::from(ClockId::PDEC) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::PDEC, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(PdecClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn ac(&mut self, generator: &GClock) -> Option<AcClock> {
+        let bits: u64 = 1 << u8::from(ClockId::AC) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::AC, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(AcClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn ccl(&mut self, generator: &GClock) -> Option<CclClock> {
+        let bits: u64 = 1 << u8::from(ClockId::CCL) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::CCL, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(CclClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn dac(&mut self, generator: &GClock) -> Option<DacClock> {
+        let bits: u64 = 1 << u8::from(ClockId::DAC) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::DAC, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(DacClock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn i2s0(&mut self, generator: &GClock) -> Option<I2S0Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::I2S0) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::I2S0, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(I2S0Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn i2s1(&mut self, generator: &GClock) -> Option<I2S1Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::I2S1) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::I2S1, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(I2S1Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn sdhc0(&mut self, generator: &GClock) -> Option<Sdhc0Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::SDHC0) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::SDHC0, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Sdhc0Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn sdhc1(&mut self, generator: &GClock) -> Option<Sdhc1Clock> {
+        let bits: u64 = 1 << u8::from(ClockId::SDHC1) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::SDHC1, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Sdhc1Clock { freq })
+    }
+    /// Configure the clock for peripheral(s) that match the name
+    /// of this function to use the specific clock generator.
+    /// The `GClock` parameter may be one of default clocks
+    /// return from `gclk0()`, `gclk1()` or a clock configured
+    /// by the host application using the `configure_gclk_divider_and_source`
+    /// method.
+    /// Returns a typed token that proves that the clock has been configured;
+    /// the peripheral initialization code will typically require that this
+    /// clock token be passed in to ensure that the clock has been initialized
+    /// appropriately.
+    /// Returns `None` is the specified generic clock has already been
+    /// configured.
+    pub fn cm4_trace(&mut self, generator: &GClock) -> Option<Cm4TraceClock> {
+        let bits: u64 = 1 << u8::from(ClockId::CM4_TRACE) as u64;
+        if (self.used_clocks & bits) != 0 { return None; }
+        self.used_clocks |= bits;
+        self.state.enable_clock_generator(ClockId::CM4_TRACE, generator.gclk);
+        let freq = self.gclks[u8::from(generator.gclk) as usize];
+        Some(Cm4TraceClock { freq })
     }
 }
-
-clock_generator!(
-    (tc0_tc1, Tc0Tc1Clock, TC0_TC1),
-    (tcc0_tcc1, Tcc0Tcc1Clock, TCC0_TCC1),
-    (tc2_tc3, Tc2Tc3Clock, TC2_TC3),
-    (tcc2_tcc3, Tcc2Tcc3Clock, TCC2_TCC3),
-    (tc4_tc5, Tc4Tc5Clock, TC4_TC5),
-    (tcc4, Tcc4Clock, TCC4),
-    (tc6_tc7, Tc6Tc7Clock, TC6_TC7),
-    (sercom0_core, Sercom0CoreClock, SERCOM0_CORE),
-    (sercom1_core, Sercom1CoreClock, SERCOM1_CORE),
-    (sercom2_core, Sercom2CoreClock, SERCOM2_CORE),
-    (sercom3_core, Sercom3CoreClock, SERCOM3_CORE),
-    (sercom4_core, Sercom4CoreClock, SERCOM4_CORE),
-    (sercom5_core, Sercom5CoreClock, SERCOM5_CORE),
-    #[cfg(feature = "min-samd51n")]
-    (sercom6_core, Sercom6CoreClock, SERCOM6_CORE),
-    #[cfg(feature = "min-samd51n")]
-    (sercom7_core, Sercom7CoreClock, SERCOM7_CORE),
-    (usb, UsbClock, USB),
-    (adc0, Adc0Clock, ADC0),
-    (adc1, Adc1Clock, ADC1),
-    (eic, EicClock, EIC),
-    (freq_m_msr, FreqmMsrClock, FREQM_MSR),
-    (freq_m_ref, FreqmRefClock, FREQM_REF),
-    (evsys0, Evsys0Clock, EVSYS0),
-    (evsys1, Evsys1Clock, EVSYS1),
-    (evsys2, Evsys2Clock, EVSYS2),
-    (evsys3, Evsys3Clock, EVSYS3),
-    (evsys4, Evsys4Clock, EVSYS4),
-    (evsys5, Evsys5Clock, EVSYS5),
-    (evsys6, Evsys6Clock, EVSYS6),
-    (evsys7, Evsys7Clock, EVSYS7),
-    (evsys8, Evsys8Clock, EVSYS8),
-    (evsys9, Evsys9Clock, EVSYS9),
-    (evsys10, Evsys10Clock, EVSYS10),
-    (evsys11, Evsys11Clock, EVSYS11),
-    (can0, Can0Clock, CAN0),
-    (can1, Can1Clock, CAN1),
-    (pdec, PdecClock, PDEC),
-    (ac, AcClock, AC),
-    (ccl, CclClock, CCL),
-    (dac, DacClock, DAC),
-    (i2s0, I2S0Clock, I2S0),
-    (i2s1, I2S1Clock, I2S1),
-    (sdhc0, Sdhc0Clock, SDHC0),
-    (sdhc1, Sdhc1Clock, SDHC1),
-    (cm4_trace, Cm4TraceClock, CM4_TRACE),
-);
+//clock_generator!(
+//    (tc0_tc1, Tc0Tc1Clock, TC0_TC1),
+//    (tcc0_tcc1, Tcc0Tcc1Clock, TCC0_TCC1),
+//    (tc2_tc3, Tc2Tc3Clock, TC2_TC3),
+//    (tcc2_tcc3, Tcc2Tcc3Clock, TCC2_TCC3),
+//    (tc4_tc5, Tc4Tc5Clock, TC4_TC5),
+//    (tcc4, Tcc4Clock, TCC4),
+//    (tc6_tc7, Tc6Tc7Clock, TC6_TC7),
+//    (sercom0_core, Sercom0CoreClock, SERCOM0_CORE),
+//    (sercom1_core, Sercom1CoreClock, SERCOM1_CORE),
+//    (sercom2_core, Sercom2CoreClock, SERCOM2_CORE),
+//    (sercom3_core, Sercom3CoreClock, SERCOM3_CORE),
+//    (sercom4_core, Sercom4CoreClock, SERCOM4_CORE),
+//    (sercom5_core, Sercom5CoreClock, SERCOM5_CORE),
+//    #[cfg(feature = "min-samd51n")]
+//    (sercom6_core, Sercom6CoreClock, SERCOM6_CORE),
+//    #[cfg(feature = "min-samd51n")]
+//    (sercom7_core, Sercom7CoreClock, SERCOM7_CORE),
+//    (usb, UsbClock, USB),
+//    (adc0, Adc0Clock, ADC0),
+//    (adc1, Adc1Clock, ADC1),
+//    (eic, EicClock, EIC),
+//    (freq_m_msr, FreqmMsrClock, FREQM_MSR),
+//    (freq_m_ref, FreqmRefClock, FREQM_REF),
+//    (evsys0, Evsys0Clock, EVSYS0),
+//    (evsys1, Evsys1Clock, EVSYS1),
+//    (evsys2, Evsys2Clock, EVSYS2),
+//    (evsys3, Evsys3Clock, EVSYS3),
+//    (evsys4, Evsys4Clock, EVSYS4),
+//    (evsys5, Evsys5Clock, EVSYS5),
+//    (evsys6, Evsys6Clock, EVSYS6),
+//    (evsys7, Evsys7Clock, EVSYS7),
+//    (evsys8, Evsys8Clock, EVSYS8),
+//    (evsys9, Evsys9Clock, EVSYS9),
+//    (evsys10, Evsys10Clock, EVSYS10),
+//    (evsys11, Evsys11Clock, EVSYS11),
+//    (can0, Can0Clock, CAN0),
+//    (can1, Can1Clock, CAN1),
+//    (pdec, PdecClock, PDEC),
+//    (ac, AcClock, AC),
+//    (ccl, CclClock, CCL),
+//    (dac, DacClock, DAC),
+//    (i2s0, I2S0Clock, I2S0),
+//    (i2s1, I2S1Clock, I2S1),
+//    (sdhc0, Sdhc0Clock, SDHC0),
+//    (sdhc1, Sdhc1Clock, SDHC1),
+//    (cm4_trace, Cm4TraceClock, CM4_TRACE),
+//);
 
 /// The frequency of the 48Mhz source.
 pub const OSC48M_FREQ: Hertz = Hertz(48_000_000);

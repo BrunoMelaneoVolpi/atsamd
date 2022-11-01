@@ -312,40 +312,202 @@ pub trait AlternateConfig: Sealed {
     const DYN: DynAlternate;
 }
 
-macro_rules! alternate {
-    (
-        $(
-            $Letter:ident
-        ),+
-    ) => {
-        paste! {
-            $(
-                #[
-                    doc = "Type-level variant of [`AlternateConfig`] for \
-                    alternate peripheral function " $Letter
-                ]
-                pub enum $Letter {}
-                impl Sealed for $Letter {}
-                impl AlternateConfig for $Letter {
-                    const DYN: DynAlternate = DynAlternate::$Letter;
-                }
-                #[
-                    doc = "Type-level variant of [`PinMode`] for alternate \
-                    peripheral function [`" $Letter "`]"
-                ]
-                pub type [<Alternate $Letter>] = Alternate<$Letter>;
-            )+
-        }
-    };
+//macro_rules! alternate {
+//    (
+//        $(
+//            $Letter:ident
+//        ),+
+//    ) => {
+//        paste! {
+//            $(
+//                #[
+//                    doc = "Type-level variant of [`AlternateConfig`] for \
+//                    alternate peripheral function " $Letter
+//                ]
+//                pub enum $Letter {}
+//                impl Sealed for $Letter {}
+//                impl AlternateConfig for $Letter {
+//                    const DYN: DynAlternate = DynAlternate::$Letter;
+//                }
+//                #[
+//                    doc = "Type-level variant of [`PinMode`] for alternate \
+//                    peripheral function [`" $Letter "`]"
+//                ]
+//                pub type [<Alternate $Letter>] = Alternate<$Letter>;
+//            )+
+//        }
+//    };
+//}
+
+
+#[doc =
+"Type-level variant of [`AlternateConfig`] for \
+                    alternate peripheral function B"]
+pub enum B {}
+impl Sealed for
+
+    B {}
+impl AlternateConfig for B {
+    const DYN: DynAlternate = DynAlternate::B;
 }
+#[doc =
+"Type-level variant of [`PinMode`] for alternate \
+                    peripheral function [`B`]"]
+pub type AlternateB = Alternate<B>;
+#[doc =
+"Type-level variant of [`AlternateConfig`] for \
+                    alternate peripheral function C"]
+pub enum C {}
+impl Sealed for C {}
+impl AlternateConfig for C {
+    const DYN: DynAlternate = DynAlternate::C;
+}
+#[doc =
+"Type-level variant of [`PinMode`] for alternate \
+                    peripheral function [`C`]"]
+pub type AlternateC = Alternate<C>;
+#[doc =
+"Type-level variant of [`AlternateConfig`] for \
+                    alternate peripheral function D"]
+pub enum D {}
+impl Sealed for D {}
+impl AlternateConfig for D {
+    const DYN: DynAlternate = DynAlternate::D;
+}
+#[doc =
+"Type-level variant of [`PinMode`] for alternate \
+                    peripheral function [`D`]"]
+pub type AlternateD = Alternate<D>;
+#[doc =
+"Type-level variant of [`AlternateConfig`] for \
+                    alternate peripheral function E"]
+pub enum E {}
+impl Sealed for E {}
+impl AlternateConfig for E {
+    const DYN: DynAlternate = DynAlternate::E;
+}
+#[doc =
+"Type-level variant of [`PinMode`] for alternate \
+                    peripheral function [`E`]"]
+pub type AlternateE = Alternate<E>;
+#[doc =
+"Type-level variant of [`AlternateConfig`] for \
+                    alternate peripheral function F"]
+pub enum F {}
+impl Sealed for F {}
+impl AlternateConfig for F {
+    const DYN: DynAlternate = DynAlternate::F;
+}
+#[doc =
+"Type-level variant of [`PinMode`] for alternate \
+                    peripheral function [`F`]"]
+pub type AlternateF = Alternate<F>;
+#[doc =
+"Type-level variant of [`AlternateConfig`] for \
+                    alternate peripheral function G"]
+pub enum G {}
+impl Sealed for G {}
+impl AlternateConfig for G {
+    const DYN: DynAlternate = DynAlternate::G;
+}
+#[doc =
+"Type-level variant of [`PinMode`] for alternate \
+                    peripheral function [`G`]"]
+pub type AlternateG = Alternate<G>;
+#[doc =
+"Type-level variant of [`AlternateConfig`] for \
+                    alternate peripheral function H"]
+pub enum H {}
+impl Sealed for
+    H {}
+impl AlternateConfig for H {
+    const DYN: DynAlternate = DynAlternate::H;
+}
+#[doc =
+"Type-level variant of [`PinMode`] for alternate \
+                    peripheral function [`H`]"]
+pub type AlternateH = Alternate<H>;
+#[doc =
+"Type-level variant of [`AlternateConfig`] for \
+                    alternate peripheral function I"]
+pub enum I {}
+impl Sealed for
+    I {}
+impl AlternateConfig for I {
+    const DYN: DynAlternate = DynAlternate::I;
+}
+#[doc =
+"Type-level variant of [`PinMode`] for alternate \
+                    peripheral function [`I`]"]
+pub type AlternateI = Alternate<I>;
+#[doc =
+"Type-level variant of [`AlternateConfig`] for \
+                    alternate peripheral function J"]
+pub enum J {}
+impl Sealed for J {}
+impl AlternateConfig for J {
+    const DYN: DynAlternate = DynAlternate::J;
+}
+#[doc =
+"Type-level variant of [`PinMode`] for alternate \
+                    peripheral function [`J`]"]
+pub type AlternateJ = Alternate<J>;
+#[doc =
+"Type-level variant of [`AlternateConfig`] for \
+                    alternate peripheral function K"]
+pub enum K {}
+impl Sealed for K {}
+impl AlternateConfig for K {
+    const DYN: DynAlternate = DynAlternate::K;
+}
+#[doc =
+"Type-level variant of [`PinMode`] for alternate \
+                    peripheral function [`K`]"]
+pub type AlternateK = Alternate<K>;
+#[doc =
+"Type-level variant of [`AlternateConfig`] for \
+                    alternate peripheral function L"]
+pub enum L {}
+impl Sealed for L {}
+impl AlternateConfig for L {
+    const DYN: DynAlternate = DynAlternate::L;
+}
+#[doc =
+"Type-level variant of [`PinMode`] for alternate \
+                    peripheral function [`L`]"]
+pub type AlternateL = Alternate<L>;
+#[doc =
+"Type-level variant of [`AlternateConfig`] for \
+                    alternate peripheral function M"]
+pub enum M {}
+impl Sealed for M {}
+impl AlternateConfig for M {
+    const DYN: DynAlternate = DynAlternate::M;
+}
+#[doc =
+"Type-level variant of [`PinMode`] for alternate \
+                    peripheral function [`M`]"]
+pub type AlternateM = Alternate<M>;
+#[doc =
+"Type-level variant of [`AlternateConfig`] for \
+                    alternate peripheral function N"]
+pub enum N {}
+impl Sealed for N {}
+impl AlternateConfig for N {
+    const DYN: DynAlternate = DynAlternate::N;
+}
+#[doc =
+"Type-level variant of [`PinMode`] for alternate \
+                    peripheral function [`N`]"]
+pub type AlternateN = Alternate<N>;
 
-alternate!(B, C, D, E, F, G);
-
-#[cfg(any(feature = "samd21", feature = "min-samd51g"))]
-alternate!(H);
-
-#[cfg(feature = "min-samd51g")]
-alternate!(I, J, K, L, M, N);
+//alternate!(B, C, D, E, F, G);
+//
+//#[cfg(any(feature = "samd21", feature = "min-samd51g"))]
+//alternate!(H);
+//
+//#[cfg(feature = "min-samd51g")]
+//alternate!(I, J, K, L, M, N);
 
 /// Type-level variant of [`PinMode`] for alternate peripheral functions
 ///

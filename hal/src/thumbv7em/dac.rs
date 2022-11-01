@@ -1,10 +1,17 @@
 
-
 use core::marker::PhantomData;
+use core::panic;
+//use crate::clock::{GenericClockController, ClockId};
+use crate::clock::GenericClockController;
+
+use crate::pac::gclk::pchctrl::GEN_A::GCLK11;
+use crate::pac::gclk::genctrl::SRC_A::DFLL;
 
 use crate::pac::{DAC, MCLK};
 //use crate::pac::{DAC_OTHER, TC5};
-//use crate::pac::{Interrupt};
+use crate::pac::interrupt;
+use cortex_m::peripheral::NVIC;
+
 
 pub trait DacInstance {
     const INDEX: usize;
@@ -40,7 +47,7 @@ impl<I: DacInstance> DacUnit<I> {
             .runstdby().clear_bit()
             .dither().clear_bit()
             .refresh().refresh_1()
-            .cctrl().cc12m()                //  TBD...
+            .cctrl().cc100k()               //  TBD:    /!\ Depends on the CLK_DAC
             .fext().clear_bit()             //  TBD:    use "integrated" for now...
             .osr().osr_1());                //  TBD:    For now no oversampling/interpolation
 
@@ -48,14 +55,30 @@ impl<I: DacInstance> DacUnit<I> {
     }
 
 
-    pub fn start_conversion(self, dac: &mut Dac, data: u16) -> Self {
+    pub fn start_conversion(mut self, dac: &mut Dac, data: u16) -> Self {
+
+        //if data > 4095{
+        if data >= u16::pow(2, 12){
+            panic!("DAC data out of 12 bit range: expected range [0...4095] received {}", data);
+        }
+
+        /*  Should we wait for the DAC to be ready? */
+        self = self.wait_ready(dac);
 
         dac.0.data[I::INDEX].write(|w| unsafe { w.bits(data) });
 
         if 0 == I::INDEX {
+            /*  Wait for the sync of the new value loaded in DATA...*/
             while dac.0.syncbusy.read().data0().bit_is_set() {}
+            /*  ... and then wait for the EOC (end of conversion).  */
+            //  Perhaps there is a better way to wait for the conversion completion and consequente VOUT0 is stabilisation.
+            while dac.0.status.read().eoc0().bit_is_clear() {}
         } else {
+            /*  Wait for the sync of the new value loaded in DATA...*/
             while dac.0.syncbusy.read().data1().bit_is_set() {}
+            /*  ... and then wait for the EOC (end of conversion).  */
+            //  Perhaps there is a better way to wait for the conversion completion and consequente VOUT0 is stabilisation.
+            while dac.0.status.read().eoc1().bit_is_clear() {}
         }
 
         self
@@ -84,14 +107,32 @@ impl<I: DacInstance> DacUnit<I> {
 }
 
 impl Dac {
-    pub fn init(mclk: &mut MCLK, mut dac: DAC) -> (Dac, DacUnit<Dac0>, DacUnit<Dac1>) {
+    pub fn init(mclk: &mut MCLK,
+                mut dac: DAC,
+                clocks: &mut GenericClockController) -> (Dac, DacUnit<Dac0>, DacUnit<Dac1>) {
 
         /*  Enable DAC main clock...    */
         mclk.apbdmask.modify(|_, w| w.dac_().set_bit());
 
+        /*   */
+        let dac_clock =
+            clocks.configure_gclk_divider_and_source(GCLK11,
+                1,
+                DFLL,
+                false).expect("GCLK11 clock setup failed");
+        clocks.dac(&dac_clock).expect("dac clock setup failed");
+
+
         //  Reset just in case...
         dac.ctrla.modify(|_, w| w.swrst().set_bit());
         while dac.syncbusy.read().swrst().bit_is_set() {}
+
+        //  The voltage reference is selected by writing to
+        //  the Reference Selection bits in the Control B
+        //  register (CTRLB.REFSEL).
+        dac.ctrlb.modify(|_, w| w
+            .diff().clear_bit()     //  Single mode
+            .refsel().intref());    //  Internal reference
 
         let dac0: DacUnit<Dac0> = DacUnit::init(&mut dac);
         let dac1: DacUnit<Dac1> = DacUnit::init(&mut dac);
@@ -107,8 +148,25 @@ impl Dac {
         self
     }
 
-    pub fn enable_dac_interrupts(self) -> Self {
+    pub fn enable_dac_interrupts(self, nvic: &mut NVIC) -> Self {
         /*  Enable all interrupts for now...    */
+
+        //  Configure DAC interrupts at global interrupt controller
+        unsafe {
+            nvic.set_priority(interrupt::DAC_OTHER     , 1);
+            nvic.set_priority(interrupt::DAC_EMPTY_0   , 1);
+            nvic.set_priority(interrupt::DAC_EMPTY_1   , 1);
+            nvic.set_priority(interrupt::DAC_RESRDY_0  , 1);
+            nvic.set_priority(interrupt::DAC_RESRDY_1  , 1);
+
+            NVIC::unmask(interrupt::DAC_OTHER   );
+            NVIC::unmask(interrupt::DAC_EMPTY_0 );
+            NVIC::unmask(interrupt::DAC_EMPTY_1 );
+            NVIC::unmask(interrupt::DAC_RESRDY_0);
+            NVIC::unmask(interrupt::DAC_RESRDY_1);
+        }
+
+        //  Configure DAC interrupts at DAC reguister level
         self.0.intenset.modify(
             |_, w| w
             .overrun0().set_bit()
