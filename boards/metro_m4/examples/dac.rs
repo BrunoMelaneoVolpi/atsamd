@@ -13,7 +13,7 @@ use panic_halt as _;
 use panic_semihosting as _;
 
 use bsp::entry;
-use bsp::Pins;
+//use bsp::Pins;
 use hal::clock::GenericClockController;
 //use hal::prelude::*;
 use hal::dac::Dac;
@@ -28,13 +28,9 @@ use hal::delay::Delay;
 
 use rtt_target::{rprint, rprintln, rtt_init_print};
 //use core::sync::atomic::{AtomicUsize, Ordering};
-use core::{
-    cell::RefCell,
-};
-
+//use core::cell::RefCell;
 //use cortex_m::peripheral::NVIC;
-
-use cortex_m::{interrupt::Mutex};
+//use cortex_m::{interrupt::Mutex};
 //use crate::pac::gclk::genctrl::SRC_A::DFLL;
 //use pac::gclk::pchctrl::GEN_A::GCLK0;   //  Cyclops has a centralized
 //                                        //  point where all clock are setup...
@@ -42,14 +38,14 @@ use cortex_m::{interrupt::Mutex};
 
 
 //static G_LED: Mutex<RefCell<Option<   hal::gpio::Pin<hal::gpio::PA16, hal::gpio::PushPullOutput>   >>> = Mutex::new(RefCell::new(None));
-use hal::gpio::PushPull;
+//use hal::gpio::PushPull;
+//static G_LED: Mutex<RefCell<Option<   hal::gpio::Pin<hal::gpio::PA16, hal::gpio::Output<PushPull>>   >>> = Mutex::new(RefCell::new(None));
 use hal::gpio::B;
-static G_LED: Mutex<RefCell<Option<   hal::gpio::Pin<hal::gpio::PA16, hal::gpio::Output<PushPull>>   >>> = Mutex::new(RefCell::new(None));
 
 #[entry]
 fn main() -> ! {
     let mut peripherals = Peripherals::take().unwrap();
-    let mut core = CorePeripherals::take().unwrap();
+    let core = CorePeripherals::take().unwrap();
     let mut gen_clcks =
         GenericClockController::with_external_32kosc(
             peripherals.GCLK,
@@ -59,18 +55,16 @@ fn main() -> ! {
             &mut peripherals.NVMCTRL,
     );
 
-    //  ToDo: configure pins properly
+    //  ToDo: Make sure DAC Vout pins are properly configured.
     //  todo!();
-
-    // PA02 :: Dac Vout0: LED_T_CTRL_BF: Bright temperature control
-    // PA05 :: Dac Vout1: LED_T_CTRL_DF: Darkfield temperature control
-    //  LED_T_CTRL_BF: DAC_VOUT0: PA02
-    //  LED_T_CTRL_DF: DAC_VOUT1: PA11
+    //      PA02 :: Dac Vout0: LED_T_CTRL_BF: Bright temperature control
+    //      PA05 :: Dac Vout1: LED_T_CTRL_DF: Darkfield temperature control
+    //      LED_T_CTRL_BF: DAC_VOUT0: PA02
+    //      LED_T_CTRL_DF: DAC_VOUT1: PA11
     let pins = bsp::Pins::new(peripherals.PORT);
-
-    let dac_0_out_pin =
+    let _dac_0_out_pin =
         pins.a0.into_alternate::<B>();
-    let dac_1_out_pin =
+    let _dac_1_out_pin =
         pins.a1.into_alternate::<B>();
 
 
@@ -81,7 +75,7 @@ fn main() -> ! {
                     &mut gen_clcks);
 
     //  Enable Interrupts
-//    dac = dac.enable_dac_interrupts(&mut core.NVIC);
+    //dac = dac.enable_dac_interrupts(&mut core.NVIC);
 
     //  Enable overall controller (which include two DAC units)
     dac = dac.enable_dac_controller();
@@ -110,15 +104,21 @@ fn main() -> ! {
     data_x = 0;
 
     loop {
-
+        increment =
         if (2 * INCREMENT) > data_x {
-            increment = true;
+            true
         }
-        else {
+        else
+        {
             if (u16::pow(2, 12) - (2 * INCREMENT)) < data_x {
-                increment = false;
+                false
             }
-        }
+            else
+            {
+                //  Do not change
+                increment
+            }
+        };
 
         if true == increment {
             data_x = data_x + INCREMENT;
@@ -126,12 +126,12 @@ fn main() -> ! {
             data_x = data_x - INCREMENT;
         }
 
-        rprintln!("data_x = {} ( {} to reach {} )", data_x, u16::pow(2, 12) - data_x, u16::pow(2, 12));
+//        rprintln!("data_x = {} ( {} to reach {} )", data_x, u16::pow(2, 12) - data_x, u16::pow(2, 12));
 
         dac0 = dac0.start_conversion(&mut dac, data_x);
         dac1 = dac1.start_conversion(&mut dac, data_x);
 
-        delay.delay_ms(100u16);
+        delay.delay_ms(1u16);
     }
 }
 

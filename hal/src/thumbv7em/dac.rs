@@ -132,7 +132,7 @@ impl Dac {
         //  register (CTRLB.REFSEL).
         dac.ctrlb.modify(|_, w| w
             .diff().clear_bit()     //  Single mode
-            .refsel().intref());    //  Internal reference
+            .refsel().vddana());    //  Internal reference
 
         let dac0: DacUnit<Dac0> = DacUnit::init(&mut dac);
         let dac1: DacUnit<Dac1> = DacUnit::init(&mut dac);
