@@ -7,7 +7,6 @@ $ cargo build --release --features=atsamd-hal/dma  --example spi
 #![no_std]
 #![no_main]
 
-//use atsamd_hal::dmac::Ch1;
 use metro_m4 as bsp;
 
 use bsp::hal;
@@ -22,13 +21,102 @@ use hal::clock::GenericClockController;
 use hal::delay::Delay;
 use hal::pac::{CorePeripherals, Peripherals};
 use hal::prelude::*;
+use hal::dmac::{DmaController,
+                PriorityLevel,
+                CallbackStatus,
+            };
 
-use hal::dmac::{DmaController, PriorityLevel};
+
+
+
+
+
 
 use hal::pac::interrupt;
 use cortex_m::peripheral::NVIC;
 
 use rtt_target::{rprint, rprintln, rtt_init_print};
+
+//static TIMER:    Mutex<RefCell<Option<hal::timer::TimerCounter<TC4>>>> = Mutex::new(RefCell::new(None));
+//static TRANSFER: Mutex<RefCell<Option<Transfer<dyn AnyChannel, dyn AnyBufferPair >>>> = Mutex::new(RefCell::new(None));
+//  Needed state the type of "TRANSFER":
+
+//use cortex_m::interrupt::Mutex;
+//use core::cell::RefCell;
+
+//use hal::gpio::C;
+//use hal::gpio::Alternate;
+//use hal::gpio::PA12;
+//use hal::gpio::PA13;
+//use hal::gpio::PA14;
+//use hal::gpio::Pin;
+
+//use hal::sercom::IoSet1;
+//use hal::sercom::spi::Spi;
+//use hal::sercom::spi::Config;
+//use hal::sercom::spi::Pads;
+//use hal::sercom::spi::Duplex;
+
+//use hal::dmac::{Transfer,
+    //    BufferPair,
+    //    Channel,
+    //    Ch1,
+    //    Busy
+    //};
+
+//use hal::pac::SERCOM2;
+
+//  static TRANSFER:  Mutex
+//                    <
+//                        RefCell
+//                        <
+//                            Option
+//                            <
+//                                Transfer
+//                                <
+//                                    Channel
+//                                    <
+//                                        Ch1,
+//                                        Busy
+//                                    >,
+//                                    BufferPair
+//                                    <
+//                                        &mut [u8; 13],
+//                                        Spi
+//                                        <
+//                                            Config
+//                                            <
+//                                                Pads
+//                                                <SERCOM2,
+//                                                    IoSet1,
+//                                                    Pin
+//                                                    <
+//                                                        PA14,
+//                                                        Alternate<C>
+//                                                    >,
+//                                                    Pin
+//                                                    <
+//                                                        PA12,
+//                                                        Alternate<C>
+//                                                    >,
+//                                                    Pin
+//                                                    <
+//                                                        PA13,
+//                                                        Alternate<C>
+//                                                    >
+//                                                >
+//                                            >,
+//                                            Duplex
+//                                        >
+//                                    >
+//                                    //,
+//                                    //fn (CallbackStatus)  could not make callback to compile
+//                                    //                      so removed it and use "|_| {}" instead.
+//                                >
+//                            >
+//                        >
+//                    > = Mutex::new(RefCell::new(None));
+
 
 
 #[entry]
@@ -80,12 +168,8 @@ fn main() -> ! {
                                         &mut peripherals.PM);
 
     let dma_channels = dmac.split();
-    let dma_ch1 = dma_channels.1.init(PriorityLevel::LVL0);
-
-
-
-
-
+    let dma_ch1 =
+        dma_channels.1.init(PriorityLevel::LVL0);
 
     //  Initialise SPI instance...
     let spi =
@@ -97,16 +181,24 @@ fn main() -> ! {
                         mosi,
                         miso);
 
-
-    //static mut BUFFER: [u8; 50] = [0xff; 50];
     static mut BUFFER: [u8; 13] = *b"Hello, world!";
-    unsafe{
-        let _dma_transfer = spi.send_with_dma(&mut BUFFER, dma_ch1, |_|{});
-        // dma_transfer -> Transfer<Channel<Ch::Id, Busy>, BufferPair<B, Self>, W>
-        //let (dma_ch1, _, _) = dma_transfer.wait();
+    unsafe
+    {
+        let _dma_transfer =
+            spi.send_with_dma(&mut BUFFER,
+                               dma_ch1,
+                               callback     //  |_| {}
+                            );
 
-//        any::type_name(dma_transfer);
-        //let dma_transfer = spi.send_with_dma(&mut BUFFER, dma_ch1, |_|{});
+
+        //  Due to the "callback" compilartion issue:
+        //          error[E0308]: mismatched types
+        //          "expected fn pointer, found fn item"
+        //  ... was not able to add "dma_transfer" to TRANSFER and use it
+        //  in the interrupt handler
+        //cortex_m::interrupt::free(|cs| {
+        //    TRANSFER.borrow(cs).replace(Some(dma_transfer));
+        //});
     }
 
 
@@ -125,17 +217,44 @@ fn main() -> ! {
     }
 }
 
+fn callback (sts: CallbackStatus)
+{
+    rprint!("   Callback... ");
+    match sts
+    {
+        CallbackStatus::TransferComplete   => rprint!("    sts :: CallbackStatus::TransferComplete   "),
+        CallbackStatus::TransferError      => rprint!("    sts :: CallbackStatus::TransferError      "),
+        CallbackStatus::TransferSuspended  => rprint!("    sts :: CallbackStatus::TransferSuspended  "),
+    }
+}
+
+
+#[interrupt]
+fn DMAC_1() {
+    rprint!(" DMAC_1 interrupt ");
+
+
+//    cortex_m::interrupt::free(|cs| {
+//        //  Get the xfer reference...
+//        let mut rc = TRANSFER.borrow(cs).borrow_mut();
+//        let xfer = rc.as_mut().unwrap();
+//
+//        //  Transfers.rs:   //     This function should be put inside the DMAC interrupt handler.
+//                            //     It will take care of calling the [`Transfer`]'s waker (if it exists).
+//        //Transfer::callback();
+//        xfer.
+//        xfer.callback();
+//    })
+
+
+    //  To do:  clear interrupt flag etc...
+    //todo!();
+}
+
 
 #[interrupt]
 fn DMAC_0() {
     rprint!(" DMAC_0 interrupt ");
-
-    //  To do:  clear interrupt flag etc...
-    todo!();
-}
-#[interrupt]
-fn DMAC_1() {
-    rprint!(" DMAC_1 interrupt ");
 
     //  To do:  clear interrupt flag etc...
     todo!();

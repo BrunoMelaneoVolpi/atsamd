@@ -6,8 +6,8 @@
     feature = "min-samd51g",
     doc = "
 # Undocumented features
- 
-The ATSAMx5x chips contain certain features that aren't documented in the datasheet. 
+
+The ATSAMx5x chips contain certain features that aren't documented in the datasheet.
 These features are implemented in the HAL based on experimentation with certain boards
 which have verifiably demonstrated that those features work as intended.
 
@@ -51,7 +51,7 @@ use pac::{SERCOM4, SERCOM5};
 #[cfg(feature = "min-samd51n")]
 use pac::{SERCOM6, SERCOM7};
 
-#[cfg(feature = "dma")]
+//#[cfg(feature = "dma")]   Commented out to allow vsCode Rust analyser to do its job... provide the linting aids
 use crate::dmac::TriggerSource;
 
 use crate::typelevel::Sealed;
@@ -64,7 +64,7 @@ pub mod spi;
 pub mod spi_future;
 pub mod uart;
 
-#[cfg(feature = "dma")]
+//#[cfg(feature = "dma")]   Commented out to allow vsCode Rust analyser to do its job... provide the linting aids
 pub mod dma;
 
 //==============================================================================
@@ -76,10 +76,10 @@ pub trait Sercom: Sealed + Deref<Target = sercom0::RegisterBlock> {
     /// SERCOM number
     const NUM: usize;
     /// RX Trigger source for DMA transactions
-    #[cfg(feature = "dma")]
+    //#[cfg(feature = "dma")]   Commented out to allow vsCode Rust analyser to do its job... provide the linting aids
     const DMA_RX_TRIGGER: TriggerSource;
     /// TX trigger source for DMA transactions
-    #[cfg(feature = "dma")]
+    //#[cfg(feature = "dma")]   Commented out to allow vsCode Rust analyser to do its job... provide the linting aids
     const DMA_TX_TRIGGER: TriggerSource;
     /// Enable the corresponding APB clock
     fn enable_apb_clock(&mut self, ctrl: &APB_CLK_CTRL);
@@ -94,9 +94,9 @@ macro_rules! sercom {
                 impl Sealed for Sercom~N {}
                 impl Sercom for Sercom~N {
                     const NUM: usize = N;
-                    #[cfg(feature = "dma")]
+                    //#[cfg(feature = "dma")]   Commented out to allow vsCode Rust analyser to do its job... provide the linting aids
                     const DMA_RX_TRIGGER: TriggerSource = TriggerSource::[<SERCOM~N _RX>];
-                    #[cfg(feature = "dma")]
+                    //#[cfg(feature = "dma")]   Commented out to allow vsCode Rust analyser to do its job... provide the linting aids
                     const DMA_TX_TRIGGER: TriggerSource = TriggerSource::[<SERCOM~N _TX>];
                     #[inline]
                     fn enable_apb_clock(&mut self, ctrl: &APB_CLK_CTRL) {
