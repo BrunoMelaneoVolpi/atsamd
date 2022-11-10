@@ -25,11 +25,21 @@ use hal::prelude::*;
 
 use hal::dmac::{DmaController, PriorityLevel};
 
+use hal::pac::interrupt;
+use cortex_m::peripheral::NVIC;
+
+use rtt_target::{rprint, rprintln, rtt_init_print};
+
 
 #[entry]
 fn main() -> ! {
+
+    /*  Initialise remote print...   */
+    rtt_init_print!();
+    rprintln!("================");
+
     let mut peripherals = Peripherals::take().unwrap();
-    let core = CorePeripherals::take().unwrap();
+    let mut core = CorePeripherals::take().unwrap();
     let mut clocks = GenericClockController::with_external_32kosc(
         peripherals.GCLK,
         &mut peripherals.MCLK,
@@ -46,13 +56,36 @@ fn main() -> ! {
     let sclk = pins.sclk;
     let spi_sercom = periph_alias!(peripherals.spi_sercom);
     let mclk = &mut peripherals.MCLK;
+
     /*  DMA setup...    */
+    /*  Enable all interrupts for now...    */
+
+    //  Configure DAC interrupts at global interrupt controller
+    unsafe {
+        core.NVIC.set_priority(interrupt::DMAC_0     , 1);
+        core.NVIC.set_priority(interrupt::DMAC_1     , 1);
+        core.NVIC.set_priority(interrupt::DMAC_2     , 1);
+        core.NVIC.set_priority(interrupt::DMAC_3     , 1);
+        core.NVIC.set_priority(interrupt::DMAC_OTHER , 1);
+
+        NVIC::unmask(interrupt::DMAC_0     );
+        NVIC::unmask(interrupt::DMAC_1     );
+        NVIC::unmask(interrupt::DMAC_2     );
+        NVIC::unmask(interrupt::DMAC_3     );
+        NVIC::unmask(interrupt::DMAC_OTHER );
+    }
+
     let dmac = peripherals.DMAC;
     let mut dmac = DmaController::init( dmac,
                                         &mut peripherals.PM);
 
     let dma_channels = dmac.split();
     let dma_ch1 = dma_channels.1.init(PriorityLevel::LVL0);
+
+
+
+
+
 
     //  Initialise SPI instance...
     let spi =
@@ -87,8 +120,44 @@ fn main() -> ! {
 //        }
         delay.delay_ms(1u16);
 
-        cortex_m::asm::wfi();
+//        cortex_m::asm::wfi();
 
     }
 }
 
+
+#[interrupt]
+fn DMAC_0() {
+    rprint!(" DMAC_0 interrupt ");
+
+    //  To do:  clear interrupt flag etc...
+    todo!();
+}
+#[interrupt]
+fn DMAC_1() {
+    rprint!(" DMAC_1 interrupt ");
+
+    //  To do:  clear interrupt flag etc...
+    todo!();
+}
+#[interrupt]
+fn DMAC_2() {
+    rprint!(" DMAC_2 interrupt ");
+
+    //  To do:  clear interrupt flag etc...
+    todo!();
+}
+#[interrupt]
+fn DMAC_3() {
+    rprint!(" DMAC_3 interrupt ");
+
+    //  To do:  clear interrupt flag etc...
+    todo!();
+}
+#[interrupt]
+fn DMAC_OTHER() {
+    rprint!(" DMAC_OTHER interrupt ");
+
+    //  To do:  clear interrupt flag etc...
+    todo!();
+}
