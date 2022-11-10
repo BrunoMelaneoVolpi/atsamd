@@ -57,6 +57,15 @@
             "group": "build"
         },
         {
+            "label": "Build spi",
+            "type": "shell",
+            "command": "cargo build --release --features=atsamd-hal/dma --example spi",
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": "build"
+        },
+        {
             "label": "Build timer_example",
             "type": "shell",
             "command": "cargo build --release --example timer",

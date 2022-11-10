@@ -964,15 +964,19 @@ pub fn spi_master(
     let clock = clocks.sercom2_core(&gclk0).unwrap();
     let freq = clock.freq();
     let (miso, mosi, sclk) = (miso.into(), mosi.into(), sclk.into());
-    let pads = spi::Pads::default().data_in(miso).data_out(mosi).sclk(sclk);
-    spi::Config::new(
-        mclk,
-        sercom,
-        pads,
-        freq)
-        .baud(baud)
-        .spi_mode(spi::MODE_0)
-        .enable()
+    let pads =
+        spi::Pads::default()
+            .data_in(miso)
+            .data_out(mosi)
+            .sclk(sclk);
+
+    spi::Config::new(   mclk,
+                        sercom,
+                        pads,
+                        freq)
+                            .baud(baud)
+                            .spi_mode(spi::MODE_0)
+                            .enable()
 }
 
 /// Convenience for setting up the onboard QSPI flash.

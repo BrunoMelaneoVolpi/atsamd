@@ -58,9 +58,13 @@ fn main() -> ! {
     let sercom5_clock = &clocks.sercom5_core(&gclk0).unwrap();
     let pads = i2c::Pads::new(sda, scl);
     let i2c_sercom = periph_alias!(peripherals.i2c_sercom);
-    let mut i2c = i2c::Config::new(&mclk, i2c_sercom, pads, sercom5_clock.freq())
-        .baud(100.khz())
-        .enable();
+    let mut i2c =
+        i2c::Config::new(   &mclk,
+                            i2c_sercom,
+                            pads,
+                            sercom5_clock.freq())
+                                                .baud(100.khz())
+                                                .enable();
 
     let mut buffer = [0x00; 1];
 

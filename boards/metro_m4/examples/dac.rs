@@ -131,7 +131,7 @@ fn main() -> ! {
         dac0 = dac0.start_conversion(&mut dac, data_x);
         dac1 = dac1.start_conversion(&mut dac, data_x);
 
-        delay.delay_ms(1u16);
+//        delay.delay_ms(1u16);
     }
 }
 

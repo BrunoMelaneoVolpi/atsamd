@@ -114,7 +114,8 @@ impl Dac {
         /*  Enable DAC main clock...    */
         mclk.apbdmask.modify(|_, w| w.dac_().set_bit());
 
-        /*   */
+        /*  /!\ For Cyclops, the clocking may be coded in another
+                part of the code dedicated to all clock...  */
         let dac_clock =
             clocks.configure_gclk_divider_and_source(GCLK11,
                 1,

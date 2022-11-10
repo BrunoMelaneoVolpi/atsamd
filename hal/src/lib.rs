@@ -97,7 +97,7 @@ pub mod time;
 pub mod timer_params;
 pub mod timer_traits;
 
-#[cfg(all(feature = "unproven", feature = "dma"))]
+//#[cfg(all(feature = "unproven", feature = "dma"))]
 pub mod dmac;
 
 #[cfg(all(feature = "usb", feature = "samd11"))]

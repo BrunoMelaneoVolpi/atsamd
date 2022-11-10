@@ -86,6 +86,7 @@ name = "serial"
 
 [[example]]
 name = "spi"
+required-features = ["atsamd-hal/dma"]
 
 [[example]]
 name = "timer"

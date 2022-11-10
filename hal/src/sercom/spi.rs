@@ -9,7 +9,7 @@
 //! [`spi`](embedded_hal::spi), [`serial`](embedded_hal::serial), and
 //! [`blocking`](embedded_hal::blocking) modules.
 //!
-//! # Crating a set of [`Pads`]
+//!                                                                                                 # Crating a set of [`Pads`]
 //!
 //! An SPI peripheral can use up to four [`Pin`]s as [`Sercom`] pads. However,
 //! only certain `Pin` combinations are acceptable. All `Pin`s must be mapped to
@@ -108,7 +108,7 @@ type Pads = spi::PadsFromIds<Sercom0, IoSet1, PA08, NoneT, PA09>;
 //! - Use a valid combination of [`PadNum`]s, so that the `Pads` implement
 //!   [`DipoDopo`]
 //!
-//! # `Config`uring the peripheral
+//!                                                                                                          # `Config`uring the peripheral
 //!
 //! Next, create a [`Config`] struct, which represents the SPI peripheral in its
 //! disabled state. A `Config` is specified with three type parameters: the
@@ -222,7 +222,7 @@ type Pads = spi::PadsFromIds<Sercom0, IoSet1, PA08, NoneT, PA09>;
 //! manaully. But it must be [`SomePad`] in [`MasterHWSS`] and [`Slave`] modes,
 //! where it is controlled by the hardware.
 //!
-//! # Using a functional `Spi` peripheral
+//!                                                                                                     # Using a functional `Spi` peripheral
 //!
 //! An [`Spi`] struct has two type parameters. The first is the corresponding
 //! `Config`, while the second represents its [`Capability`], i.e. [`Rx`],

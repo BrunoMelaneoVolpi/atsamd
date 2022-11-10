@@ -189,7 +189,11 @@
 //! }
 //! ```
 //!
-//! ## RTIC example
+//! ## RTIC example     THIS IS IMPORTANT!!!!!
+//!
+//! /!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\
+//! /!\/!\  THIS RTIC example IS IMPORTANT!!!!!
+//! /!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\
 //!
 //! The [RTIC] framework provides a convenient way to store a `static`ally
 //! allocated [`Transfer`], so that it can be accessed by both the interrupt

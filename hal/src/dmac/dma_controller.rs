@@ -20,7 +20,7 @@
 //! deinitialize the DMAC and return the underlying PAC object.
 
 use modular_bitfield::prelude::*;
-use seq_macro::seq;
+//use seq_macro::seq;   Melabr:     no longer needed as macro replaced by the expanded code...
 
 #[cfg(any(feature = "samd11", feature = "samd21"))]
 pub use crate::pac::dmac::chctrlb::{
@@ -48,30 +48,173 @@ pub trait ChId {
     const USIZE: usize;
 }
 
-macro_rules! define_channels_struct {
-    ($num_channels:literal) => {
-        seq!(N in 0..$num_channels {
-            #(
-                /// Type alias for a channel number
-                pub struct Ch~N;
+//  Melabr:     Macro replaced by the expanded code...
+//macro_rules! define_channels_struct {
+//    ($num_channels:literal) => {
+//        seq!(N in 0..$num_channels {
+//            #(
+//                /// Type alias for a channel number
+//                pub struct Ch~N;
+//
+//                impl ChId for Ch~N {
+//                    const U8: u8 = N;
+//                    const USIZE: usize = N;
+//                }
+//            )*
+//
+//            /// Struct generating individual handles to each DMA channel
+//            pub struct Channels(
+//                #(
+//                    pub Channel<Ch~N, Uninitialized>,
+//                )*
+//            );
+//        });
+//    };
+//}
 
-                impl ChId for Ch~N {
-                    const U8: u8 = N;
-                    const USIZE: usize = N;
-                }
-            )*
 
-            /// Struct generating individual handles to each DMA channel
-            pub struct Channels(
-                #(
-                    pub Channel<Ch~N, Uninitialized>,
-                )*
-            );
-        });
-    };
+/*  ########################################################## */
+/*  The foloowing macro:
+    with_num_channels!(define_channels_struct);
+    is expanded into :                                          */
+// Recursive expansion of with_num_channels! macro
+// ================================================
+
+#[doc = " Type alias for a channel number"]
+pub struct Ch0;
+
+impl ChId for Ch0 {
+    const U8: u8 = 0;
+    const USIZE: usize = 0;
 }
+#[doc = " Type alias for a channel number"]
+pub struct Ch1;
 
-with_num_channels!(define_channels_struct);
+impl ChId for Ch1 {
+    const U8: u8 = 1;
+    const USIZE: usize = 1;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch2;
+
+impl ChId for Ch2 {
+    const U8: u8 = 2;
+    const USIZE: usize = 2;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch3;
+
+impl ChId for Ch3 {
+    const U8: u8 = 3;
+    const USIZE: usize = 3;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch4;
+
+impl ChId for Ch4 {
+    const U8: u8 = 4;
+    const USIZE: usize = 4;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch5;
+
+impl ChId for Ch5 {
+    const U8: u8 = 5;
+    const USIZE: usize = 5;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch6;
+
+impl ChId for Ch6 {
+    const U8: u8 = 6;
+    const USIZE: usize = 6;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch7;
+
+impl ChId for Ch7 {
+    const U8: u8 = 7;
+    const USIZE: usize = 7;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch8;
+
+impl ChId for Ch8 {
+    const U8: u8 = 8;
+    const USIZE: usize = 8;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch9;
+
+impl ChId for Ch9 {
+    const U8: u8 = 9;
+    const USIZE: usize = 9;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch10;
+
+impl ChId for Ch10 {
+    const U8: u8 = 10;
+    const USIZE: usize = 10;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch11;
+
+impl ChId for Ch11 {
+    const U8: u8 = 11;
+    const USIZE: usize = 11;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch12;
+
+impl ChId for Ch12 {
+    const U8: u8 = 12;
+    const USIZE: usize = 12;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch13;
+
+impl ChId for Ch13 {
+    const U8: u8 = 13;
+    const USIZE: usize = 13;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch14;
+
+impl ChId for Ch14 {
+    const U8: u8 = 14;
+    const USIZE: usize = 14;
+}
+#[doc = " Type alias for a channel number"]
+pub struct Ch15;
+
+impl ChId for Ch15 {
+    const U8: u8 = 15;
+    const USIZE: usize = 15;
+}
+#[doc = " Struct generating individual handles to each DMA channel"]
+pub struct Channels(
+    pub Channel<Ch0, Uninitialized>,
+    pub Channel<Ch1, Uninitialized>,
+    pub Channel<Ch2, Uninitialized>,
+    pub Channel<Ch3, Uninitialized>,
+    pub Channel<Ch4, Uninitialized>,
+    pub Channel<Ch5, Uninitialized>,
+    pub Channel<Ch6, Uninitialized>,
+    pub Channel<Ch7, Uninitialized>,
+    pub Channel<Ch8, Uninitialized>,
+    pub Channel<Ch9, Uninitialized>,
+    pub Channel<Ch10, Uninitialized>,
+    pub Channel<Ch11, Uninitialized>,
+    pub Channel<Ch12, Uninitialized>,
+    pub Channel<Ch13, Uninitialized>,
+    pub Channel<Ch14, Uninitialized>,
+    pub Channel<Ch15, Uninitialized>,
+);
+/*  ########################################################## */
+
+
+
 
 /// Initialized DMA Controller
 pub struct DmaController {
@@ -249,22 +392,49 @@ impl DmaController {
     }
 }
 
-macro_rules! define_split {
-    ($num_channels:literal) => {
-        seq!(N in 0..$num_channels {
-            /// Split the DMAC into individual channels
-            #[inline]
-            pub fn split(&mut self) -> Channels {
-                Channels(
-                    #(
-                        new_chan(core::marker::PhantomData),
-                    )*
-                )
-            }
-        });
-    };
-}
+//macro_rules! define_split {
+//    ($num_channels:literal) => {
+//        seq!(N in 0..$num_channels {
+//            /// Split the DMAC into individual channels
+//            #[inline]
+//            pub fn split(&mut self) -> Channels {
+//                Channels(
+//                    #(
+//                        new_chan(core::marker::PhantomData),
+//                    )*
+//                )
+//            }
+//        });
+//    };
+//}
 
 impl DmaController {
-    with_num_channels!(define_split);
+//  Melabr: Macro replaced by the expanded code...
+//    with_num_channels!(define_split);
+
+
+    #[doc = " Split the DMAC into individual channels"]
+    #[inline]
+    pub fn split(&mut self) -> Channels {
+        Channels(
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+            new_chan(core::marker::PhantomData),
+        )
+    }
+
 }
+
