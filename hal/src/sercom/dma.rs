@@ -335,9 +335,17 @@ where
 
         // SAFETY: This is safe because the of the `'static` bound check
         // for `B`, and the fact that the buffer length of an `Spi` is always 1.
-        let xfer = unsafe { Transfer::new_unchecked(channel, buf, self, false) };
+        let xfer =
+            unsafe {
+                Transfer::new_unchecked(
+                    channel,
+                    buf,
+                    self,
+                    false)
+                };
         xfer.with_waker(waker)
-            .begin(C::Sercom::DMA_TX_TRIGGER, trigger_action)
+            .begin(C::Sercom::DMA_TX_TRIGGER,
+                   trigger_action)
     }
 }
 
@@ -373,7 +381,14 @@ where
 
         // SAFETY: This is safe because the of the `'static` bound check
         // for `B`, and the fact that the buffer length of an `Spi` is always 1.
-        let xfer = unsafe { Transfer::new_unchecked(channel, self, buf, false) };
+        let xfer =
+            unsafe {
+                Transfer::new_unchecked(
+                    channel,
+                    self,
+                    buf,
+                    false)
+                    };
         xfer.with_waker(waker)
             .begin(C::Sercom::DMA_RX_TRIGGER, trigger_action)
     }

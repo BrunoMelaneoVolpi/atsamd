@@ -23,7 +23,6 @@ use hal::pac::{CorePeripherals, Peripherals};
 use hal::prelude::*;
 use hal::dmac::{DmaController,
                 PriorityLevel,
-                CallbackStatus,
             };
 
 
@@ -37,33 +36,33 @@ use cortex_m::peripheral::NVIC;
 
 use rtt_target::{rprint, rprintln, rtt_init_print};
 
+use hal::dmac::InterruptFlags;
+
+
 //static TIMER:    Mutex<RefCell<Option<hal::timer::TimerCounter<TC4>>>> = Mutex::new(RefCell::new(None));
 //static TRANSFER: Mutex<RefCell<Option<Transfer<dyn AnyChannel, dyn AnyBufferPair >>>> = Mutex::new(RefCell::new(None));
-//  Needed state the type of "TRANSFER":
 
-//use cortex_m::interrupt::Mutex;
-//use core::cell::RefCell;
-
+//  Needed to define the state type of "TRANSFER":
+use cortex_m::interrupt::Mutex;
+use core::cell::RefCell;
 //use hal::gpio::C;
 //use hal::gpio::Alternate;
 //use hal::gpio::PA12;
 //use hal::gpio::PA13;
 //use hal::gpio::PA14;
 //use hal::gpio::Pin;
-
 //use hal::sercom::IoSet1;
 //use hal::sercom::spi::Spi;
 //use hal::sercom::spi::Config;
 //use hal::sercom::spi::Pads;
 //use hal::sercom::spi::Duplex;
-
 //use hal::dmac::{Transfer,
-    //    BufferPair,
-    //    Channel,
-    //    Ch1,
-    //    Busy
-    //};
-
+//                BufferPair,
+//                Channel,
+//                Ch1,
+//                Busy,
+//                //CallbackStatus,
+//  };
 //use hal::pac::SERCOM2;
 
 //  static TRANSFER:  Mutex
@@ -109,7 +108,11 @@ use rtt_target::{rprint, rprintln, rtt_init_print};
 //                                            Duplex
 //                                        >
 //                                    >
-//                                    //,
+//                                    ,
+//                                    ()
+//                                    //impl FnOnce
+//                                    //FnOnce<CallbackStatus>
+//                                    //FnOnce(CallbackStatus)
 //                                    //fn (CallbackStatus)  could not make callback to compile
 //                                    //                      so removed it and use "|_| {}" instead.
 //                                >
@@ -118,13 +121,23 @@ use rtt_target::{rprint, rprintln, rtt_init_print};
 //                    > = Mutex::new(RefCell::new(None));
 
 
+    static DMAC:  Mutex
+    <
+        RefCell
+        <
+            Option
+            <
+                DmaController
+            >
+        >
+    > = Mutex::new(RefCell::new(None));
 
 #[entry]
 fn main() -> ! {
 
     /*  Initialise remote print...   */
     rtt_init_print!();
-    rprintln!("================");
+    rprintln!("\n================");
 
     let mut peripherals = Peripherals::take().unwrap();
     let mut core = CorePeripherals::take().unwrap();
@@ -168,8 +181,9 @@ fn main() -> ! {
                                         &mut peripherals.PM);
 
     let dma_channels = dmac.split();
-    let dma_ch1 =
-        dma_channels.1.init(PriorityLevel::LVL0);
+
+    let dma_ch1 = dma_channels.1.init(PriorityLevel::LVL0);
+    let dma_ch2 = dma_channels.2.init(PriorityLevel::LVL0);
 
     //  Initialise SPI instance...
     let spi =
@@ -181,24 +195,29 @@ fn main() -> ! {
                         mosi,
                         miso);
 
-    static mut BUFFER: [u8; 13] = *b"Hello, world!";
+    static mut BUFFER_TX: [u8; 13] = *b"Hello, world!";
+    static mut BUFFER_RX: [u8; 13] = [ 0; 13];
+
     unsafe
     {
+        /*  Setup Tx transfer...    */
         let _dma_transfer =
-            spi.send_with_dma(&mut BUFFER,
-                               dma_ch1,
-                               callback     //  |_| {}
-                            );
+            spi.send_with_dma(&mut BUFFER_TX,
+                dma_ch1,
+                |_| {}   //  Could not make "callback" to work...
+        );
+
+//        /*  Setup Rx transfer...    */
+//        let _dma_transfer =
+//            spi.receive_with_dma(&mut BUFFER_RX,
+//                dma_ch2,
+//                |_| {}   //  Could not make "callback" to work...
+//        );
 
 
-        //  Due to the "callback" compilartion issue:
-        //          error[E0308]: mismatched types
-        //          "expected fn pointer, found fn item"
-        //  ... was not able to add "dma_transfer" to TRANSFER and use it
-        //  in the interrupt handler
-        //cortex_m::interrupt::free(|cs| {
-        //    TRANSFER.borrow(cs).replace(Some(dma_transfer));
-        //});
+        cortex_m::interrupt::free(|cs| {
+            DMAC.borrow(cs).replace(Some(dmac));
+        });
     }
 
 
@@ -217,16 +236,16 @@ fn main() -> ! {
     }
 }
 
-fn callback (sts: CallbackStatus)
-{
-    rprint!("   Callback... ");
-    match sts
-    {
-        CallbackStatus::TransferComplete   => rprint!("    sts :: CallbackStatus::TransferComplete   "),
-        CallbackStatus::TransferError      => rprint!("    sts :: CallbackStatus::TransferError      "),
-        CallbackStatus::TransferSuspended  => rprint!("    sts :: CallbackStatus::TransferSuspended  "),
-    }
-}
+//fn callback (sts: CallbackStatus)
+//{
+//    rprint!("\n   Callback... ");
+//    match sts
+//    {
+//        CallbackStatus::TransferComplete   => rprint!("\n    sts :: CallbackStatus::TransferComplete   "),
+//        CallbackStatus::TransferError      => rprint!("\n    sts :: CallbackStatus::TransferError      "),
+//        CallbackStatus::TransferSuspended  => rprint!("\n    sts :: CallbackStatus::TransferSuspended  "),
+//    }
+//}
 
 
 #[interrupt]
@@ -234,17 +253,54 @@ fn DMAC_1() {
     rprint!(" DMAC_1 interrupt ");
 
 
-//    cortex_m::interrupt::free(|cs| {
-//        //  Get the xfer reference...
-//        let mut rc = TRANSFER.borrow(cs).borrow_mut();
-//        let xfer = rc.as_mut().unwrap();
-//
-//        //  Transfers.rs:   //     This function should be put inside the DMAC interrupt handler.
-//                            //     It will take care of calling the [`Transfer`]'s waker (if it exists).
-//        //Transfer::callback();
-//        xfer.
-//        xfer.callback();
-//    })
+    cortex_m::interrupt::free(|cs| {
+        //  Get the xfer reference...
+        let mut dmac_ref_mut = DMAC.borrow(cs).borrow_mut();
+        let dmac_option = dmac_ref_mut.as_mut();
+        let dmac = dmac_option.unwrap();
+
+        let mut channels = dmac.split();
+
+        let dma_ch2 = channels.2;
+
+        let mut flags = InterruptFlags::new();
+
+
+        /*  Why did the interrupt fire???       */
+        flags.set_tcmpl(true);  assert_eq!(flags.tcmpl(),   true);
+        flags.set_terr(true);   assert_eq!(flags.terr(),    true);
+        flags.set_susp(true);   assert_eq!(flags.susp(),    true);
+
+        let interrup = channels.1.check_and_clear_interrupts(flags);
+
+        rprint!("\n    Why did the interrupt fire   {} {} {}",
+            interrup.tcmpl(),
+            interrup.terr(),
+            interrup.susp(),
+         );
+
+        if true == interrup.tcmpl() {
+            rprint!("\n    tcmpl: TransferComplete   ");
+        }
+        else {
+            if true == interrup.terr() {
+                rprint!("\n    terr: TransferError      ");
+            }
+            else{
+                if true == interrup.susp() {
+                    rprint!("\n    susp: TransferSuspended  ");
+                }
+                else {
+                    rprint!("\n .........  Unexpected...  ");
+                }
+            }
+        }
+
+        /*  Was it a Tx or Rx trasnfer?     */
+        //  channels.1.re
+
+
+    })
 
 
     //  To do:  clear interrupt flag etc...
@@ -254,28 +310,28 @@ fn DMAC_1() {
 
 #[interrupt]
 fn DMAC_0() {
-    rprint!(" DMAC_0 interrupt ");
+    rprint!("\n DMAC_0 interrupt ");
 
     //  To do:  clear interrupt flag etc...
     todo!();
 }
 #[interrupt]
 fn DMAC_2() {
-    rprint!(" DMAC_2 interrupt ");
+    rprint!("\n DMAC_2 interrupt ");
 
     //  To do:  clear interrupt flag etc...
     todo!();
 }
 #[interrupt]
 fn DMAC_3() {
-    rprint!(" DMAC_3 interrupt ");
+    rprint!("\n DMAC_3 interrupt ");
 
     //  To do:  clear interrupt flag etc...
     todo!();
 }
 #[interrupt]
 fn DMAC_OTHER() {
-    rprint!(" DMAC_OTHER interrupt ");
+    rprint!("\n DMAC_OTHER interrupt ");
 
     //  To do:  clear interrupt flag etc...
     todo!();
