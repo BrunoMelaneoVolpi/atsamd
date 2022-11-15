@@ -9,6 +9,7 @@ $ cargo build --release --features=atsamd-hal/dma  --example spi
 
 use metro_m4 as bsp;
 
+//use bsp::{hal, Cs};
 use bsp::hal;
 
 #[cfg(not(feature = "use_semihosting"))]
@@ -134,6 +135,12 @@ use core::cell::RefCell;
         >
     > = Mutex::new(RefCell::new(None));
 
+
+use mcp49xx::{Channel, Command, Mcp49xx};
+
+
+
+
 #[entry]
 fn main() -> ! {
 
@@ -154,9 +161,12 @@ fn main() -> ! {
     let mut delay = Delay::new(core.SYST, &mut clocks);
     let pins = bsp::Pins::new(peripherals.PORT);
 
-    let miso = pins.miso;
-    let mosi = pins.mosi;
-    let sclk = pins.sclk;
+    let miso    = pins.miso;
+    let mosi    = pins.mosi;
+    let sclk    = pins.sclk;
+    let cs      = pins.cs;
+
+
     let spi_sercom = periph_alias!(peripherals.spi_sercom);
     let mclk = &mut peripherals.MCLK;
 
@@ -195,10 +205,35 @@ fn main() -> ! {
                         mclk,
                         sclk,
                         mosi,
-                        miso);
+                        miso,
+                        cs//  pass the chip select pin so that the sercom drives the CS pin autonomously
+                    );
+
+
+//      loop {
+//          for byte in b"Hello, world!" {
+//              nb::block!(spi.send(*byte)).unwrap();
+//          }
+//          delay.delay_ms(1000u16);
+//      }
+
+
+
 
     static mut BUFFER_TX: [u8; 13] = *b"Hello, world!";
     static mut BUFFER_RX: [u8; 13] = [ 0; 13];
+
+
+
+
+    let chip_select = pins.d2;
+//    let mut dac = Mcp49xx::new_mcp4812(chip_select);       // /!\ /!\ /!\ /!\ /!\
+//    let mut dac = Mcp49xx::new_mcp4802(chip_select);
+//    let mut dac = Mcp49xx::new_mcp4921(chip_select);
+
+    let cmd = Command::default();
+
+
 
     unsafe
     {
@@ -268,7 +303,9 @@ fn DMAC_1() {
         let mut flags = InterruptFlags::new();
 
 
-        /*  Why did the interrupt fire???       */
+        //  To do:
+        //      Figure out why the interrupt triggered?
+        //      Clear the interrupt flag etc...
         flags.set_tcmpl(true);  assert_eq!(flags.tcmpl(),   true);
         flags.set_terr(true);   assert_eq!(flags.terr(),    true);
         flags.set_susp(true);   assert_eq!(flags.susp(),    true);
@@ -279,7 +316,7 @@ fn DMAC_1() {
             interrup.tcmpl(),
             interrup.terr(),
             interrup.susp(),
-         );
+        );
 
         if true == interrup.tcmpl() {
             rprint!("\n    tcmpl: TransferComplete   ");
@@ -303,10 +340,6 @@ fn DMAC_1() {
             channels.1.interrupt_trigger_source()
         );
     })
-
-
-    //  To do:  clear interrupt flag etc...
-    //todo!();
 }
 
 

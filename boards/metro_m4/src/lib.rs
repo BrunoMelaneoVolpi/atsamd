@@ -389,27 +389,48 @@ pub struct Pins {
     pub neopixel: crate::gpio::Pin<crate::gpio::PB22, crate::gpio::Reset>,
     #[
 
+
+
+
+
     doc = r" The SPI SCLK attached the to 2x3 header"]
-    #[doc =
-    "\nThis field can also be accessed using the [`pin_alias!`] \
-                                macro with the following alternate names:\n    "]
+    #[doc ="\nThis field can also be accessed using the [`pin_alias!`] macro with the following alternate names:\n    "]
     #[doc = "sclk, "]
     pub sclk: crate::gpio::Pin<crate::gpio::PA13, crate::gpio::Reset>,
     #[doc = r" The SPI MOSI attached the to 2x3 header"]
-    #[doc =
-    "\nThis field can also be accessed using the [`pin_alias!`] \
-                                macro with the following alternate names:\n    "]
+    #[doc ="\nThis field can also be accessed using the [`pin_alias!`] macro with the following alternate names:\n    "]
     #[doc = "mosi, "]
     pub mosi: crate::gpio::Pin<crate::gpio::PA12, crate::gpio::Reset>,
     #[doc = r" The SPI MISO attached the to 2x3 header"]
-    #[doc =
-    "\nThis field can also be accessed using the [`pin_alias!`] \
-                                macro with the following alternate names:\n    "]
+    #[doc ="\nThis field can also be accessed using the [`pin_alias!`] macro with the following alternate names:\n    "]
     #[doc = "miso, "]
-    pub miso: crate::gpio::Pin<crate::gpio::PA14, crate::gpio::Reset>,
-    #[
+    pub miso: crate::gpio::Pin<crate::gpio::PA15, crate::gpio::Reset>,
 
-    doc = r" The SCK pin attached to the on-board SPI flash"]
+    #[doc = "cs, "]
+    pub cs: crate::gpio::Pin<crate::gpio::PA14, crate::gpio::Reset>,
+/*
+    According to the datasheet §6, the relationship between
+    Pin Id and Pad[0...3] for Sercom2 IOSET 1 is as follows:
+            PA12    PAD0
+            PA13    PAD1
+            PA14    PAD2
+            PA15    PAD3
+
+    But also according to the datasheet the SS pin /!\MUST/!\ be PAD2:
+        DOPO
+            PAD[2] Master SS pin when MSSEN = 1 otherwise System configuration
+    ... as such the other pins must be swapped accordingly to accomodate this need!
+    This is done in the
+        DIPO:   when selecting the Rx / input pin
+        DOPO:   when selecting the remaining pins: DO, SCK, SS
+                Because SS MUST be PAD[2], then the only options are: 0x0 and 0x2
+*/
+
+
+
+
+
+    #[doc = r" The SCK pin attached to the on-board SPI flash"]
     #[doc =
     "\nThis field can also be accessed using the [`pin_alias!`] \
                                 macro with the following alternate names:\n    "]
@@ -506,7 +527,10 @@ impl Pins {
             neopixel: pins.pb22,
             sclk: pins.pa13,
             mosi: pins.pa12,
-            miso: pins.pa14,
+
+            miso: pins.pa15,
+            cs: pins.pa14,  //  MELABR: Added
+
             flash_sclk: pins.pb10,
             flash_cs: pins.pb11,
             flash_d0: pins.pa08,
@@ -616,6 +640,10 @@ pub const SCL_ID: crate::gpio::DynPinId =
 #[doc = "for the `Scl` alias."]
 pub const SCL_MODE: crate::gpio::DynPinMode =
     <crate::gpio::AlternateD as crate::gpio::PinMode>::DYN;
+
+
+
+
 #[doc = " Alias for a configured [`Pin`](atsamd_hal::gpio::Pin)"]
 pub type Sclk = crate::gpio::Pin<crate::gpio::PA13, crate::gpio::AlternateC>;
 #[doc = "[`PinId`](atsamd_hal::gpio::PinId) for the [`"]
@@ -632,6 +660,7 @@ pub const SCLK_ID: crate::gpio::DynPinId =
 #[doc = "for the `Sclk` alias."]
 pub const SCLK_MODE: crate::gpio::DynPinMode =
     <crate::gpio::AlternateC as crate::gpio::PinMode>::DYN;
+
 #[doc = " Alias for a configured [`Pin`](atsamd_hal::gpio::Pin)"]
 pub type Mosi = crate::gpio::Pin<crate::gpio::PA12, crate::gpio::AlternateC>;
 #[doc = "[`PinId`](atsamd_hal::gpio::PinId) for the [`"]
@@ -648,22 +677,52 @@ pub const MOSI_ID: crate::gpio::DynPinId =
 #[doc = "for the `Mosi` alias."]
 pub const MOSI_MODE: crate::gpio::DynPinMode =
     <crate::gpio::AlternateC as crate::gpio::PinMode>::DYN;
+
+
 #[doc = " Alias for a configured [`Pin`](atsamd_hal::gpio::Pin)"]
-pub type Miso = crate::gpio::Pin<crate::gpio::PA14, crate::gpio::AlternateC>;
+pub type Miso = crate::gpio::Pin<crate::gpio::PA15, crate::gpio::AlternateC>;
 #[doc = "[`PinId`](atsamd_hal::gpio::PinId) for the [`"]
 #[doc = "Miso`] alias"]
-pub type MisoId = crate::gpio::PA14;
+pub type MisoId = crate::gpio::PA15;
 #[doc = "[`PinMode`](atsamd_hal::gpio::PinMode) for the [`"]
 #[doc = "Miso`] alias"]
 pub type MisoMode = crate::gpio::AlternateC;
 #[doc = "[DynPinId](atsamd_hal::gpio::DynPinId) "]
 #[doc = "for the `Miso` alias."]
 pub const MISO_ID: crate::gpio::DynPinId =
-    <crate::gpio::PA14 as crate::gpio::PinId>::DYN;
+    <crate::gpio::PA15 as crate::gpio::PinId>::DYN;
 #[doc = "[DynPinMode](atsamd_hal::gpio::DynPinMode) "]
 #[doc = "for the `Miso` alias."]
 pub const MISO_MODE: crate::gpio::DynPinMode =
     <crate::gpio::AlternateC as crate::gpio::PinMode>::DYN;
+
+
+    #[doc = " Alias for a configured [`Pin`](atsamd_hal::gpio::Pin)"]
+    pub type Cs = crate::gpio::Pin<crate::gpio::PA14, crate::gpio::AlternateC>;
+    #[doc = "[`PinId`](atsamd_hal::gpio::PinId) for the [`"]
+    #[doc = "Cs`] alias"]
+    pub type CsId = crate::gpio::PA14;
+    #[doc = "[`PinMode`](atsamd_hal::gpio::PinMode) for the [`"]
+    #[doc = "Cs`] alias"]
+    pub type CsMode = crate::gpio::AlternateC;
+    #[doc = "[DynPinId](atsamd_hal::gpio::DynPinId) "]
+    #[doc = "for the `Cs` alias."]
+    pub const CS_ID: crate::gpio::DynPinId =
+        <crate::gpio::PA14 as crate::gpio::PinId>::DYN;
+    #[doc = "[DynPinMode](atsamd_hal::gpio::DynPinMode) "]
+    #[doc = "for the `Cs` alias."]
+    pub const CS_MODE: crate::gpio::DynPinMode =
+        <crate::gpio::AlternateC as crate::gpio::PinMode>::DYN;
+
+
+
+
+
+
+
+
+
+
 #[doc = " Alias for a configured [`Pin`](atsamd_hal::gpio::Pin)"]
 pub type FlashSclk =
     crate::gpio::Pin<crate::gpio::PB10, crate::gpio::AlternateH>;
@@ -941,7 +1000,7 @@ macro_rules! pin_alias {
 /// SPI pads for the labelled SPI peripheral
 ///
 /// You can use these pads with other, user-defined [`spi::Config`]urations.
-pub type SpiPads = spi::Pads<SpiSercom, IoSet1, Miso, Mosi, Sclk>;
+pub type SpiPads = spi::Pads<SpiSercom, IoSet1, Miso, Mosi, Sclk, Cs>;
 
 /// SPI master for the labelled SPI peripheral
 ///
@@ -959,16 +1018,23 @@ pub fn spi_master(
     sclk: impl Into<Sclk>,
     mosi: impl Into<Mosi>,
     miso: impl Into<Miso>,
+    cs:   impl Into<Cs>
 ) -> Spi {
     let gclk0 = clocks.gclk0();
     let clock = clocks.sercom2_core(&gclk0).unwrap();
     let freq = clock.freq();
-    let (miso, mosi, sclk) = (miso.into(), mosi.into(), sclk.into());
+    let miso = miso.into();
+    let mosi = mosi.into();
+    let sclk = sclk.into();
+    let chip_select = cs.into();
+
     let pads =
         spi::Pads::default()
             .data_in(miso)
             .data_out(mosi)
-            .sclk(sclk);
+            .sclk(sclk)
+            .ss(chip_select) // ... must be added to drive the chip select autonomously...
+            ;
 
     spi::Config::new(   mclk,
                         sercom,

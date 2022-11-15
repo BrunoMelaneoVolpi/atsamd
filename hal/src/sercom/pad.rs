@@ -68,19 +68,40 @@ mod impl_pad;
 /// [type-level enum]: crate::typelevel#type-level-enum
 pub trait PadNum: Sealed {}
 
-seq!(N in 0..=3 {
-    paste! {
-        #[doc = "Type-level variant of [`PadNum`] representing SERCOM pad " N]
-        ///
-        /// See the [type-level enum] documentation for an explanation of the
-        /// pattern.
-        ///
-        /// [type-level enum]: crate::typelevel#type-level-enum
-        pub enum Pad~N {}
-        impl Sealed for Pad~N {}
-        impl PadNum for Pad~N {}
-    }
-});
+//seq!(N in 0..=3 {
+//    paste! {
+//        #[doc = "Type-level variant of [`PadNum`] representing SERCOM pad " N]
+//        ///
+//        /// See the [type-level enum] documentation for an explanation of the
+//        /// pattern.
+//        ///
+//        /// [type-level enum]: crate::typelevel#type-level-enum
+//        pub enum Pad~N {}
+//        impl Sealed for Pad~N {}
+//        impl PadNum for Pad~N {}
+//    }
+//});
+/*  Melabr:     Expanded macro... */
+#[doc = "Type-level variant of [`PadNum`] representing SERCOM pad 0"]
+pub enum Pad0 {}
+impl Sealed for Pad0 {}
+impl PadNum for Pad0 {}
+
+#[doc = "Type-level variant of [`PadNum`] representing SERCOM pad 1"]
+pub enum Pad1 {}
+impl Sealed for Pad1 {}
+impl PadNum for Pad1 {}
+
+#[doc = "Type-level variant of [`PadNum`] representing SERCOM pad 2"]
+pub enum Pad2 {}
+impl Sealed for Pad2 {}
+impl PadNum for Pad2 {}
+
+#[doc = "Type-level variant of [`PadNum`] representing SERCOM pad 3"]
+pub enum Pad3 {}
+impl Sealed for Pad3 {}
+impl PadNum for Pad3 {}
+
 
 //==============================================================================
 // OptionalPadNum

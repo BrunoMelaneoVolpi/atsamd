@@ -633,7 +633,19 @@ impl Transmit for Duplex {}
 ///
 /// See the [module-level](super) documentation for more details on declaring
 /// and instantiating `Pads` types.
-pub struct Config<P, M = Master, Z = DefaultSize>
+
+
+// To be accepted as a [`ValidConfig`], the `Config` must have a set of
+// [`ValidPads`] that matches its [`OpMode`]. In particular, the `SS` pad must
+// be [`NoneT`] for [`Master`] mode, where the user is expected to handle it
+// manaully. But it must be [`SomePad`] in [`MasterHWSS`] and [`Slave`] modes,
+//                                           ^^^^^^^^^^
+// where it is controlled by the hardware.
+
+
+
+//pub struct Config<P, M = Master, Z = DefaultSize>     //  With Master Configuration the SS pin must be driven by the code...
+pub struct Config<P, M = MasterHWSS, Z = DefaultSize>   //  With MasterHWSS Configuration the SS pin is driven automatically driven by the SercomHardware...
 where
     P: ValidPads,
     M: OpMode,
@@ -652,7 +664,7 @@ impl<P: ValidPads> Config<P> {
     fn default(sercom: P::Sercom, pads: P, freq: impl Into<Hertz>) -> Self {
         let mut regs = Registers { sercom };
         regs.reset();
-        regs.set_op_mode(Master::MODE, Master::MSSEN);
+        regs.set_op_mode(MasterHWSS::MODE, MasterHWSS::MSSEN);
         regs.set_dipo_dopo(P::DIPO_DOPO);
         #[cfg(any(feature = "samd11", feature = "samd21"))]
         regs.set_char_size(EightBit::BITS);
