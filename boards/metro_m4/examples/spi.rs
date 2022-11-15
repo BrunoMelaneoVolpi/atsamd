@@ -24,6 +24,8 @@ use hal::prelude::*;
 use hal::dmac::{DmaController,
                 PriorityLevel,
             };
+//use hal::dmac::PriorityLevel;
+//d_hal::dmac::channel::reg::ChctrlaProxy
 
 
 
@@ -296,10 +298,10 @@ fn DMAC_1() {
             }
         }
 
-        /*  Was it a Tx or Rx trasnfer?     */
-        //  channels.1.re
-
-
+        /*  Was it a Tx or Rx transfer that triggered the interrupt?    */
+        rprint!("\n  Interrupt Trigger Source: {} ",
+            channels.1.interrupt_trigger_source()
+        );
     })
 
 

@@ -260,7 +260,74 @@ macro_rules! reg_proxy {
     };
 }
 
-reg_proxy!(chctrla, register, rw);
+//reg_proxy!(chctrla, register, rw);
+
+#[doc = " Register proxy tied to a specific channel"]
+pub(super) struct ChctrlaProxy<Id: ChId, REG> {
+    #[allow(unused)]
+    dmac: DMAC,
+    _id: PhantomData<Id>,
+    _reg: PhantomData<REG>,
+}
+impl<Id: ChId> ChctrlaProxy<Id, CHCTRLA> {
+    #[doc = " Create a new register proxy"]
+    #[inline]
+    pub fn new() -> Self {
+        Self {
+            dmac: unsafe { Peripherals::steal().DMAC },
+            _id: PhantomData,
+            _reg: PhantomData,
+        }
+    }
+}
+impl<Id: ChId> Register<Id> for ChctrlaProxy<Id, CHCTRLA> {
+    fn dmac(&self) -> &DMAC {
+        &self.dmac
+    }
+}
+impl<Id> ChctrlaProxy<Id, CHCTRLA>
+where
+    Id: ChId,
+    CHCTRLA_SPEC: pac::generic::Readable,
+{
+    #[inline]
+    #[allow(dead_code)]
+    pub fn read(&mut self) -> channel_regs::chctrla::R {
+        self.with_chid(|d| d.chctrla.read())
+    }
+}
+impl<Id> ChctrlaProxy<Id, CHCTRLA>
+where
+    Id: ChId,
+    CHCTRLA_SPEC: pac::generic::Writable,
+{
+    #[inline]
+    #[allow(dead_code)]
+    pub fn write<F>(&mut self, func: F)
+    where
+        for<'w> F: FnOnce(&'w mut channel_regs::chctrla::W) -> &'w mut channel_regs::chctrla::W,
+    {
+        self.with_chid(|d| d.chctrla.write(|w| func(w)));
+    }
+}
+impl<Id> ChctrlaProxy<Id, CHCTRLA>
+where
+    Id: ChId,
+    CHCTRLA_SPEC: pac::generic::Writable + pac::generic::Readable,
+{
+    #[inline]
+    #[allow(dead_code)]
+    pub fn modify<F>(&mut self, func: F)
+    where
+        for<'w> F: FnOnce(
+            &channel_regs::chctrla::R,
+            &'w mut channel_regs::chctrla::W,
+        ) -> &'w mut channel_regs::chctrla::W,
+    {
+        self.with_chid(|d| d.chctrla.modify(|r, w| func(r, w)));
+    }
+}
+
 reg_proxy!(chctrlb, register, rw);
 reg_proxy!(chintenclr, register, rw);
 reg_proxy!(chintenset, register, rw);

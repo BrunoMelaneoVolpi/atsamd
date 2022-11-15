@@ -190,6 +190,13 @@ impl<Id: ChId, S: Status> Channel<Id, S> {
         InterruptFlags::from_bytes([cleared])
     }
 
+//----  Hack  ------------------------------------
+    #[inline]
+    pub fn interrupt_trigger_source(&mut self) -> usize {
+        return self.regs.chctrla.read().trigsrc().variant().unwrap() as usize;
+    }
+//------------------------------------------------
+
     #[inline]
     fn _reset_private(&mut self) {
         // Reset the channel to its startup state and wait for reset to complete
