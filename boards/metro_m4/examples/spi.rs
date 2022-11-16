@@ -7,6 +7,7 @@ $ cargo build --release --features=atsamd-hal/dma  --example spi
 #![no_std]
 #![no_main]
 
+
 use metro_m4 as bsp;
 
 //use bsp::{hal, Cs};
@@ -25,9 +26,26 @@ use hal::prelude::*;
 use hal::dmac::{DmaController,
                 PriorityLevel,
             };
-//use hal::dmac::PriorityLevel;
-//d_hal::dmac::channel::reg::ChctrlaProxy
 
+
+mod dac_mcp48fvb12_1;
+//mod dac_mcp48fvb12_2;
+
+use dac_mcp48fvb12_1::CmdDacOutput;
+use dac_mcp48fvb12_1::Cmd0x08Vref;
+use dac_mcp48fvb12_1::Cmd0x09PowerDown;
+use dac_mcp48fvb12_1::Cmd0x0AGain;
+use crate::dac_mcp48fvb12_1::DacId;
+use crate::dac_mcp48fvb12_1::CmdType;
+use crate::dac_mcp48fvb12_1::VrefSource;
+use crate::dac_mcp48fvb12_1::Power;
+use crate::dac_mcp48fvb12_1::Gain;
+//use crate::dac_mcp48fvb12_1::SetOutput;
+use crate::dac_mcp48fvb12_1::SetCommandType;
+use crate::dac_mcp48fvb12_1::BuildCommand;
+use crate::dac_mcp48fvb12_1::CommandStream;
+//use crate::dac_mcp48fvb12_1::DAC_COMMAND_SIZE;
+//use core::default::Default;
 
 
 
@@ -136,11 +154,6 @@ use core::cell::RefCell;
     > = Mutex::new(RefCell::new(None));
 
 
-//use mcp49xx::{Channel, Command, Mcp49xx};       //  NOT APPLICABLE... Not the same chip!
-
-mod dac_mcp48fvb12_1;
-//mod dac_mcp48fvb12_2;
-
 
 #[entry]
 fn main() -> ! {
@@ -219,22 +232,69 @@ fn main() -> ! {
 //      }
 
 
+    let mut cmd1 = CmdDacOutput::new(DacId::Dac0);
+    rprintln!("   cmd1 :: {:?}", cmd1);
+    cmd1.set_output(0xFFu16);
+    rprintln!("   cmd1 :: {:?}", cmd1);
+
+    rprintln!("--------------------------------------");
+    let mut cmd2 = CmdDacOutput::new(DacId::Dac1);
+    rprintln!("   cmd2 :: {:?}", cmd2);
+    cmd2.set_output(0xFFu16);
+    rprintln!("   cmd2 :: {:?}", cmd2);
+
+    cmd2.set_cmd_type(CmdType::READ);
+    rprintln!("   cmd2 :: {:?}", cmd2);
+
+    rprintln!("--------------------------------------");
+    let mut cmd_0x08_vref = Cmd0x08Vref::new();
+    cmd_0x08_vref.set_vref( VrefSource::VrefUnbuffered,
+                            VrefSource::VddUnbuffered);
+    cmd_0x08_vref.build_command();
+    rprintln!("cmd_0x08_Vref :: {:?}", cmd_0x08_vref);
+
+    rprintln!("--------------------------------------");
+    let mut cmd_0x09_power_down = Cmd0x09PowerDown::new();
+    cmd_0x09_power_down.set_power_down( Power::NormalOperation,
+                                        Power::NormalOperation);
+    cmd_0x09_power_down.build_command();
+    rprintln!("cmd_0x09_power_down :: {:?}", cmd_0x09_power_down);
+
+    rprintln!("--------------------------------------");
+    let mut cmd_0x0a_gain = Cmd0x0AGain::new();
+    cmd_0x0a_gain.set_gain( Gain::Gainx2,
+                            Gain::Gainx2);
+    cmd_0x0a_gain.build_command();
+    rprintln!("cmd_0x0a_gain :: {:?}", cmd_0x0a_gain);
 
 
-    static mut BUFFER_TX: [u8; 13] = *b"Hello, world!";
-//    static mut BUFFER_RX: [u8; 13] = [ 0; 13];
 
+    //  static mut STREAM______xxxxxxxx: CommandStream = CommandStream::new();
+    //  static mut STREAM______xxxxxxxx: CommandStream = Default::default();
+    //  STREAM______xxxxxxxx =
 
+    cmd2.build_command();
 
+    static mut STREAM : [u8 ; 3] = [0; 3];
 
     unsafe
     {
+        rprintln!("   STREAM :: {:?}", STREAM);
+
         /*  Setup Tx transfer...    */
         let _dma_transfer =
-            spi.send_with_dma(&mut BUFFER_TX,
+            spi.send_with_dma(&mut STREAM,
                 dma_ch1,
                 |_| {}   //  Could not make "callback" to work...
         );
+
+//  works!        static mut BUFFER_TX: [u8; 13] = *b"Hello, world!";
+//  works!        /*  Setup Tx transfer...    */
+//  works!        let _dma_transfer =
+//  works!            spi.send_with_dma(&mut BUFFER_TX,
+//  works!                dma_ch1,
+//  works!                |_| {}   //  Could not make "callback" to work...
+//  works!        );
 
 //        /*  Setup Rx transfer...    */
 //        let _dma_transfer =
