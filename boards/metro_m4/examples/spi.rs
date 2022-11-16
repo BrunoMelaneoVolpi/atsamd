@@ -136,9 +136,10 @@ use core::cell::RefCell;
     > = Mutex::new(RefCell::new(None));
 
 
-use mcp49xx::{Channel, Command, Mcp49xx};
+//use mcp49xx::{Channel, Command, Mcp49xx};       //  NOT APPLICABLE... Not the same chip!
 
-
+mod dac_mcp48fvb12_1;
+//mod dac_mcp48fvb12_2;
 
 
 #[entry]
@@ -195,7 +196,7 @@ fn main() -> ! {
     let dma_channels = dmac.split();
 
     let dma_ch1 = dma_channels.1.init(PriorityLevel::LVL0);
-    let dma_ch2 = dma_channels.2.init(PriorityLevel::LVL0);
+//    let dma_ch2 = dma_channels.2.init(PriorityLevel::LVL0);
 
     //  Initialise SPI instance...
     let spi =
@@ -221,17 +222,8 @@ fn main() -> ! {
 
 
     static mut BUFFER_TX: [u8; 13] = *b"Hello, world!";
-    static mut BUFFER_RX: [u8; 13] = [ 0; 13];
+//    static mut BUFFER_RX: [u8; 13] = [ 0; 13];
 
-
-
-
-    let chip_select = pins.d2;
-//    let mut dac = Mcp49xx::new_mcp4812(chip_select);       // /!\ /!\ /!\ /!\ /!\
-//    let mut dac = Mcp49xx::new_mcp4802(chip_select);
-//    let mut dac = Mcp49xx::new_mcp4921(chip_select);
-
-    let cmd = Command::default();
 
 
 
@@ -298,7 +290,7 @@ fn DMAC_1() {
 
         let mut channels = dmac.split();
 
-        let dma_ch2 = channels.2;
+//        let dma_ch2 = channels.2;
 
         let mut flags = InterruptFlags::new();
 
