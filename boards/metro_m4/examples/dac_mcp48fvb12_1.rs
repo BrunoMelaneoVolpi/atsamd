@@ -1,45 +1,14 @@
 //#![no_std]
 //#![no_main]
 
+use core::panic;
+
 use rtt_target::{rprint, rprintln, rtt_init_print};
 
-//  ======  Functions    ===========================
-fn new_cmd_byte(mem_add: MemAdd, cmd_type: CmdType) -> CommandByte{
-    CommandByte{
-        mem_add:    mem_add,        //  Memory address
-        cmd_type:   cmd_type,       //  Read, Write
-        cmd_err:    false,          //  CmdType,
-    }
-}
-
-fn new_cmd_stream(cmd: & CommandByte) -> u8{
-
-    let command_byte =  ((cmd.mem_add as u8) << 3) |
-                            ((cmd.cmd_type as u8) << 1) |
-                            ((cmd.cmd_err as u8));
-
-    command_byte
-}
 
 //  ======  Traits    ==============================
-pub trait Default {
-    fn default(&self) -> Self;
-}
-
-
-//pub const DAC_COMMAND_SIZE: usize = 3;
-//pub type CommandStream = [u8; DAC_COMMAND_SIZE];
-
-#[derive(Default)]
-#[derive(Debug)]
-#[repr(C)]
-pub struct CommandStream{
-    command_byte:   u8,
-    data_word:      u16
-}
-
 pub trait BuildCommand {
-    fn build_command(&self) -> CommandStream;
+    fn build_command(&self) -> CommandFrame;
 }
 
 pub trait SetCommandType{
@@ -47,23 +16,33 @@ pub trait SetCommandType{
 }
 
 //  ======  Type definitions    ====================
+pub const DAC_COMMAND_SIZE: usize = 3;
+pub type CommandFrame = [u8; DAC_COMMAND_SIZE];
+pub const DEFAULT_CMD_FRAME: CommandFrame = [0; DAC_COMMAND_SIZE];
+
+#[derive(Debug)]
+#[repr(C)]
+struct CommandData{
+    command_byte:   u8,
+    data_word:      u16
+}
+
 #[derive(Debug, PartialEq)]
 pub enum DacId {
     Dac0 = 0,
     Dac1 = 1,
 }
 
-
 #[derive(Debug)]
 #[repr(u8)]
 pub enum CmdType {
-    READ = 0b00,
+    READ  = 0b00,
     WRITE = 0b11,
 }
 
 #[derive(Debug)]
 #[repr(u8)]
-pub enum MemAdd {
+enum MemAdd {
     Dac0OutputAddress   = 0x00,
     Dac1OutputAddress   = 0x01,
     VrefAddress         = 0x08,
@@ -71,11 +50,8 @@ pub enum MemAdd {
     GainAddress         = 0x0A,
 }
 
-//#[bitfield]
-//#[repr(u8)]
-//#[derive(Clone, Copy)]
 #[derive(Debug)]
-pub struct CommandByte {
+struct CommandByte {
     pub mem_add:    MemAdd,     //  Memory address
     pub cmd_type:   CmdType,    //  Read, Write
     pub cmd_err:    bool,       //  CmdType,
@@ -83,7 +59,7 @@ pub struct CommandByte {
 
 //  ---------------------------------------------------------------------
 #[derive(Debug)]
-pub struct DataWord0x0xDacOutput{
+struct DataWord0x0xDacOutput{
 /*  3FFh = Full-Scale output value
     1FFh = Mid-Scale output value
     000h = Zero-Scale output value   */
@@ -112,10 +88,15 @@ impl CmdDacOutput{
     }
 
     pub fn set_output(& mut self, value: u16) -> (){
-        self.data_word.output = value;
+        if value <= 0x3FF{
+            self.data_word.output = value;
+        }
+        else {
+            // Handle error...
+            panic!(" DAC data out of 10 bit range: expected range [0...0x3FF] received {}", value);
+        }
     }
 }
-
 
 
 impl SetCommandType for CmdDacOutput{
@@ -124,22 +105,16 @@ impl SetCommandType for CmdDacOutput{
     }
 }
 
-
 impl BuildCommand for CmdDacOutput{
-    fn build_command(&self) -> CommandStream{
-        let stream = CommandStream{
-            command_byte:   new_cmd_stream( & self.command_byte),
+    fn build_command(&self) -> CommandFrame{
+        let cmd = CommandData{
+            command_byte:   new_cmd( & self.command_byte),
             data_word:      self.data_word.output
         };
 
-        //rprintln!("   stream :: CmdDacOutput :: {:?}", stream);
-
-        //  return the built command
-        stream
+        return frame_conversion(cmd);
     }
 }
-
-
 
 //  ---------------------------------------------------------------------
 #[derive(Debug)]
@@ -181,42 +156,35 @@ impl Cmd0x08Vref{
     }
 }
 
-
 impl SetCommandType for Cmd0x08Vref{
     fn set_cmd_type(& mut self, cmd_type: CmdType) -> (){
         self.command_byte.cmd_type = cmd_type
     }
 }
 
-
 impl BuildCommand for Cmd0x08Vref{
-    fn build_command(&self) -> CommandStream{
+    fn build_command(&self) -> CommandFrame{
 
         const DAC1_VREF_OFFSET  :u8 = 2;
         const DAC0_VREF_OFFSET  :u8 = 0;
 
-        let stream = CommandStream{
-            command_byte:   new_cmd_stream( & self.command_byte),
+        let cmd = CommandData{
+            command_byte:   new_cmd( & self.command_byte),
             data_word:      ((self.data_word.dac_1_v_ref_src as u16) << DAC1_VREF_OFFSET) |
                             ((self.data_word.dac_0_v_ref_src as u16) << DAC0_VREF_OFFSET)
         };
 
-        //rprintln!("   stream :: Cmd0x08Vref :: {:?}", stream);
-
-        //  return the built command
-        stream
+        return frame_conversion(cmd);
     }
 }
-
-
 
 //  ---------------------------------------------------------------------
 #[derive(Debug)]
 pub enum Power {
-    NormalOperation         = 0b00,     //  00 =Normal Operation (Not powered-down)
-    PoweredDown1kToGround   = 0b01,     //  01 =Powered Down - VOUT is loaded with a 1 k resistor to ground.
-    PoweredDown100kToGround = 0b10,     //  10 =Powered Down - VOUT is loaded with a 100 k resistor to ground.
-    PoweredDownOpenCircuit  = 0b11,     //  11 =Powered Down - VOUT is open circuit.
+    NormalOperation         = 0b00,     //  00 = Normal Operation (Not powered-down)
+    PoweredDown1kToGround   = 0b01,     //  01 = Powered Down - VOUT is loaded with a 1 k resistor to ground.
+    PoweredDown100kToGround = 0b10,     //  10 = Powered Down - VOUT is loaded with a 100 k resistor to ground.
+    PoweredDownOpenCircuit  = 0b11,     //  11 = Powered Down - VOUT is open circuit.
 }
 
 #[derive(Debug)]
@@ -253,21 +221,18 @@ impl Cmd0x09PowerDown{
 
 
 impl BuildCommand for Cmd0x09PowerDown{
-    fn build_command(&self) -> CommandStream{
+    fn build_command(&self) -> CommandFrame{
 
         const DAC1_POWER_OFFSET  :u8 = 2;
         const DAC0_POWER_OFFSET  :u8 = 0;
 
-        let stream = CommandStream{
-            command_byte:   new_cmd_stream( & self.command_byte),
+        let cmd = CommandData{
+            command_byte:   new_cmd( & self.command_byte),
             data_word:      ((self.data_word.dac_1_power as u16) << DAC1_POWER_OFFSET) |
                             ((self.data_word.dac_0_power as u16) << DAC0_POWER_OFFSET)
         };
 
-        //rprintln!("   stream :: Cmd0x08Vref :: {:?}", stream);
-
-        //  return the built command
-        stream
+        return frame_conversion(cmd);
     }
 }
 
@@ -320,42 +285,46 @@ impl Cmd0x0AGain{
 }
 
 impl BuildCommand for Cmd0x0AGain{
-    fn build_command(&self) -> CommandStream{
+    fn build_command(&self) -> CommandFrame{
 
         const DAC1_GAIN_OFFSET  :u8 = 9;
         const DAC0_GAIN_OFFSET  :u8 = 8;
         const POR_OFFSET        :u8 = 7;
 
-        let stream = CommandStream{
-            command_byte:   new_cmd_stream( & self.command_byte),
+        let cmd = CommandData{
+            command_byte:   new_cmd( & self.command_byte),
             data_word:      ((self.data_word.dac_1_gain as u16) << DAC1_GAIN_OFFSET) |
                             ((self.data_word.dac_0_gain as u16) << DAC0_GAIN_OFFSET) |
                             ((self.data_word.por as u16) << POR_OFFSET)
         };
 
-        //rprintln!("   stream :: Cmd0x08Vref :: {:?}", stream);
-
-        //  return the built command
-        stream
+        return frame_conversion(cmd);
     }
 }
 
-//  ======  Implementations    =====================
-
 //  ======  Functions    ===========================
+fn new_cmd_byte(mem_add: MemAdd, cmd_type: CmdType) -> CommandByte{
+    CommandByte{
+        mem_add:    mem_add,        //  Memory address
+        cmd_type:   cmd_type,       //  Read, Write
+        cmd_err:    false,          //  CmdType,
+    }
+}
 
+fn new_cmd(cmd: & CommandByte) -> u8{
 
-//0x00DacOutput
-//0x01DacOutput
-//0x08Vref
-//0x09PowerDown
-//0x0AGain
+    let command_byte =  ((cmd.mem_add as u8) << 3) |
+                            ((cmd.cmd_type as u8) << 1) |
+                            ((cmd.cmd_err as u8));
 
+    command_byte
+}
 
-//#[repr(C)]
-//pub struct Command0x00DacOutput{
-//
-//    fields x
-//    fields y
-//
-//}
+fn frame_conversion(cmd : CommandData) -> CommandFrame{
+    let mut frame = DEFAULT_CMD_FRAME;
+    frame [0] = cmd.command_byte;
+    frame [1] = ((cmd.data_word & 0xFF00) >> 8) as u8;
+    frame [2] = (cmd.data_word & 0xFF) as u8;
+
+    frame
+}
