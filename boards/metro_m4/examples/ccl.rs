@@ -40,11 +40,11 @@ fn main() -> ! {
 
     let pins = bsp::Pins::new(peripherals.PORT);
 
-//    let _lut_0_in_1 = pins.a1.into_alternate::<N>();
-//    let _lut_0_out = pins.d11.into_alternate::<N>();
+    let _lut_0_in_1 = pins.a1.into_alternate::<N>();
+    let _lut_0_out = pins.d11.into_alternate::<N>();
 
-    let _lut_0_in_1 = pins.pb00.into_alternate::<N>();
-    let _lut_0_out = pins.pb02.into_alternate::<N>();
+//    let _lut_0_in_1 = pins.pb00.into_alternate::<N>();
+//    let _lut_0_out = pins.pb02.into_alternate::<N>();
 
 
     peripherals.MCLK.apbcmask.modify(|_, w| w.ccl_().set_bit());
