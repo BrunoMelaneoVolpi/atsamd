@@ -65,6 +65,15 @@
             ],
             "group": "build"
         },
+        {
+            "label": "Build ccl",
+            "type": "shell",
+            "command": "cargo build --release --example ccl",
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": "build"
+        },
 //        {
 //            "label":    "Reset Target",
 //
