@@ -8,6 +8,7 @@ pub mod timer;
 pub mod trng;
 
 pub mod dac;
+pub mod ccl;
 
 
 #[cfg(feature = "usb")]

@@ -317,6 +317,10 @@ pub struct Pins {
     pub a0: crate::gpio::Pin<crate::gpio::PA02, crate::gpio::Reset>,
     #[doc = r" Analog Pin 1"]
     pub a1: crate::gpio::Pin<crate::gpio::PA05, crate::gpio::Reset>,
+
+    #[doc = r" DEBUGGING CCL"]
+    pub pb00: crate::gpio::Pin<crate::gpio::PB00, crate::gpio::Reset>,
+
     #[doc = r" Analog Pin 2"]
     pub a2: crate::gpio::Pin<crate::gpio::PA06, crate::gpio::Reset>,
     #[doc = r" Analog Pin 3"]
@@ -374,8 +378,10 @@ pub struct Pins {
     #[doc =
     "\nThis field can also be accessed using the [`pin_alias!`] \
                                 macro with the following alternate names:\n    "]
-    #[doc = "sda, "]
-    pub sda: crate::gpio::Pin<crate::gpio::PB02, crate::gpio::Reset>,
+    #[doc = "pb02, "]
+    pub pb02: crate::gpio::Pin<crate::gpio::PB02, crate::gpio::Reset>,
+//    #[doc = "sda, "]
+//    pub sda: crate::gpio::Pin<crate::gpio::PB02, crate::gpio::Reset>,
     #[doc = r" The I2C clock line"]
     #[doc =
     "\nThis field can also be accessed using the [`pin_alias!`] \
@@ -481,6 +487,7 @@ impl Pins {
             port: Some(unsafe { pins.port() }),
             a0: pins.pa02,
             a1: pins.pa05,
+            pb00: pins.pb00,
             a2: pins.pa06,
             a3: pins.pa04,
             a4: pins.pb08,
@@ -501,7 +508,7 @@ impl Pins {
             d11: pins.pa19,
             d12: pins.pa17,
             d13: pins.pa16,
-            sda: pins.pb02,
+            pb02: pins.pb02,
             scl: pins.pb03,
             neopixel: pins.pb22,
             sclk: pins.pa13,
