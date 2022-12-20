@@ -65,8 +65,10 @@ fn main() -> ! {
     let pins = bsp::Pins::new(peripherals.PORT);
 
 
-    let lut_0_out = pins.d11.into_alternate::<N>();
-    let lut_0_in_1 = pins.a3.into_alternate::<N>();
+    let _lut_0_in_0 = pins.a3.into_alternate::<N>();
+//  let _lut_0_in_0 = pins.d13.into_alternate::<N>();
+
+    let _lut_0_out = pins.d11.into_alternate::<N>();
 
     peripherals.MCLK.apbcmask.modify(|_, w| w.ccl_().set_bit());
 
@@ -95,9 +97,25 @@ fn main() -> ! {
 
                     x = masked!     */
 
+    /*
+        LUTCTRL
+            TRUTH =
+                IN   2 1 0 | Out
+                    ------+----
+                    x x 0 | 0
+                    x x 1 | 1
+                    x x 0 | 0
+                    x x 1 | 1
+                    x x 0 | 0
+                    x x 1 | 1
+                    x x 0 | 0
+                    x x 1 | 1
+
+                    x = masked!     */
+
 
     //self.ccl.lutctrl[0].modify(|_, w| unsafe{w.truth().bits(0b1111_1111)});
-    peripherals.CCL.lutctrl[0].modify(|_, w| unsafe{w.truth().bits(0b0011_0011)});
+    peripherals.CCL.lutctrl[0].modify(|_, w| unsafe{w.truth().bits(0b0101_0101)});
     //self.ccl.lutctrl[0].modify(|_, w| unsafe{w.truth().bits(0b1100_1100)});
 
 
@@ -109,8 +127,8 @@ fn main() -> ! {
             INSEL0 = MASK
             INSEL1 = IO
             INSEL2 = MASK   */
-    peripherals.CCL.lutctrl[0].modify(|_, w| w.insel0().mask());
-    peripherals.CCL.lutctrl[0].modify(|_, w| w.insel1().io());//
+    peripherals.CCL.lutctrl[0].modify(|_, w| w.insel0().io());  //  PA04 used above is CCL IN[0]
+    peripherals.CCL.lutctrl[0].modify(|_, w| w.insel1().mask());//
     peripherals.CCL.lutctrl[0].modify(|_, w| w.insel2().mask());
 
 
