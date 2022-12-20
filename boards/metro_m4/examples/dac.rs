@@ -41,6 +41,7 @@ use rtt_target::{rprint, rprintln, rtt_init_print};
 //use hal::gpio::PushPull;
 //static G_LED: Mutex<RefCell<Option<   hal::gpio::Pin<hal::gpio::PA16, hal::gpio::Output<PushPull>>   >>> = Mutex::new(RefCell::new(None));
 use hal::gpio::B;
+use hal::gpio::N;
 
 #[entry]
 fn main() -> ! {
@@ -62,6 +63,89 @@ fn main() -> ! {
     //      LED_T_CTRL_BF: DAC_VOUT0: PA02
     //      LED_T_CTRL_DF: DAC_VOUT1: PA11
     let pins = bsp::Pins::new(peripherals.PORT);
+
+
+    let lut_0_out = pins.d11.into_alternate::<N>();
+    let lut_0_in_1 = pins.a3.into_alternate::<N>();
+
+    peripherals.MCLK.apbcmask.modify(|_, w| w.ccl_().set_bit());
+
+
+    /*  Reset just in case...   */
+    peripherals.CCL.ctrl.modify(|_, w| w.swrst().set_bit());
+
+
+    //  CCL CTRL Enable (CTRL.ENABLE)
+    peripherals.CCL.ctrl.modify(|_, w| w.enable().clear_bit());
+
+    //  LUT0 Conf
+    /*
+        LUTCTRL
+            TRUTH =
+                IN   2 1 0 | Out
+                    ------+----
+                    x 0 x | 0
+                    x 0 x | 0
+                    x 1 x | 1
+                    x 1 x | 1
+                    x 0 x | 0
+                    x 0 x | 0
+                    x 1 x | 1
+                    x 1 x | 1
+
+                    x = masked!     */
+
+
+    //self.ccl.lutctrl[0].modify(|_, w| unsafe{w.truth().bits(0b1111_1111)});
+    peripherals.CCL.lutctrl[0].modify(|_, w| unsafe{w.truth().bits(0b0011_0011)});
+    //self.ccl.lutctrl[0].modify(|_, w| unsafe{w.truth().bits(0b1100_1100)});
+
+
+    /*  LUTEO = 0   LUT event output is disabled    */
+    peripherals.CCL.lutctrl[0].modify(|_, w| w.luteo().clear_bit());
+    /*  LUTEi = 0   LUT incoming event is disabled  */
+    peripherals.CCL.lutctrl[0].modify(|_, w| w.lutei().clear_bit());
+    /*  INSELx
+            INSEL0 = MASK
+            INSEL1 = IO
+            INSEL2 = MASK   */
+    peripherals.CCL.lutctrl[0].modify(|_, w| w.insel0().mask());
+    peripherals.CCL.lutctrl[0].modify(|_, w| w.insel1().io());//
+    peripherals.CCL.lutctrl[0].modify(|_, w| w.insel2().mask());
+
+
+
+
+
+    //peripherals.CCL.lutctrl[0].modify(|_, w| w.filtsel().filter()  );
+
+
+
+
+    /*  ENABLE = 1  */
+    peripherals.CCL.lutctrl[0].modify(|_, w| w.enable().set_bit());
+
+
+
+    //  CCL CTRL Enable (CTRL.ENABLE)
+    peripherals.CCL.ctrl.modify(|_, w| w.enable().set_bit());
+    peripherals.CCL.ctrl.modify(|_, w| w.enable().set_bit());
+
+
+
+    //  Delay to be used in the loop...
+    let mut delay = Delay::new(core.SYST, &mut gen_clcks);
+    loop {
+
+        delay.delay_ms(1u16);
+    }
+
+
+
+
+
+    /* ************************************** */
+
     let _dac_0_out_pin =
         pins.a0.into_alternate::<B>();
     let _dac_1_out_pin =
