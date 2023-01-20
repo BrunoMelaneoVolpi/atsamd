@@ -74,6 +74,16 @@
             ],
             "group": "build"
         },
+        {
+            "label": "Build i2c",
+            "type": "shell",
+            //"command": "cargo build --release --example i2c",
+            "command": "cargo build --example i2c",
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": "build"
+        },
 //        {
 //            "label":    "Reset Target",
 //

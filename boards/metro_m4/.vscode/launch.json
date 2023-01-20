@@ -168,5 +168,41 @@
             //  "Ctrl + Space" for more attributes.
             //  "postDebugTask":        "Reset Target"              //  Commented out in tasks.jason.
         },
+
+
+
+        {
+            "preLaunchTask":            "Build i2c",
+            "type":                     "probe-rs-debug",       //  Some of the following attributes relate to the typpe selected
+                                                                //  in this field.
+            "request":                  "launch",
+            "name":                     "Probe-Rs Debugging i2c_example",
+            "cwd":                      "${workspaceFolder}",   //https://code.visualstudio.com/docs/editor/variables-reference#_predefined-variables
+            "chip":                     "ATSAMD51J19A",
+            "connectUnderReset":        false,
+            "flashingConfig": {
+                "flashingEnabled":      true,
+                "resetAfterFlashing":   true,
+                "haltAfterReset":       true                    //  Target waits for the user to press Continue (F5 / 'play' button)
+                                                                //  on the debug user interface.
+            },
+            "coreConfigs": [
+                {
+                    "coreIndex":        0,
+                    //"programBinary":    "./target/thumbv7em-none-eabihf/release/examples/i2c",
+                    "programBinary":    "./target/thumbv7em-none-eabihf/debug/examples/i2c",
+                    "svdFile":          "../../svd/ATSAMD51J19A.svd",
+                    "rttEnabled":       true,
+                    "options": {
+                        "env": {
+                            "DEFMT_LOG": "debug"
+                        }
+                    }
+                }
+            ],
+            "consoleLogLevel": "Info", //Error, Warn, Info, Debug, Trace
+            //  "Ctrl + Space" for more attributes.
+            //  "postDebugTask":        "Reset Target"              //  Commented out in tasks.jason.
+        },
     ]
 }

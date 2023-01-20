@@ -94,7 +94,7 @@ fn main() -> ! {
 
     /*  Initialise remote print...   */
     rtt_init_print!();
-    rprintln!("================");
+    rprintln!("====  DAC  ==========");
 
     //  Delay to be used in the loop...
     let mut delay = Delay::new(core.SYST, &mut gen_clcks);

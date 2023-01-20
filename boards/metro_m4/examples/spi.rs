@@ -37,7 +37,14 @@ fn main() -> ! {
     let spi_sercom = periph_alias!(peripherals.spi_sercom);
     let mclk = &mut peripherals.MCLK;
 
-    let mut spi = bsp::spi_master(&mut clocks, 3.mhz(), spi_sercom, mclk, sclk, mosi, miso);
+    let mut spi =
+        bsp::spi_master(&mut clocks,
+                        3.mhz(),
+                        spi_sercom,
+                        mclk,
+                        sclk,
+                        mosi,
+                        miso);
 
     loop {
         for byte in b"Hello, world!" {
