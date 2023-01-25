@@ -228,148 +228,189 @@ fn main() -> ! {
                         Hertz::from(MLX90632_BAUD).0,
                         ).unwrap();
 
+    rprintln!("===== mlx90632 init ====");
+
+    print_u16(" id0                 ", mlx90632.ee_params.id0             );
+    print_u16(" id1                 ", mlx90632.ee_params.id1             );
+    print_u16(" id2                 ", mlx90632.ee_params.id2             );
+    print_u16(" id_crc              ", mlx90632.ee_params.id_crc          );
+    print_u16(" ee_product_code     ", mlx90632.ee_params.ee_product_code );
+    print_u16(" ee_version          ", mlx90632.ee_params.ee_version      );
+    print_i32(" EE_P_R              ", mlx90632.ee_params.ee_p_r          );
+    print_i32(" EE_P_G              ", mlx90632.ee_params.ee_p_g          );
+    print_i32(" EE_P_T              ", mlx90632.ee_params.ee_p_t          );
+    print_i32(" EE_P_O              ", mlx90632.ee_params.ee_p_o          );
+    //print_u32(" EE_AA               ", mlx90632.ee_params.ee_aa           );
+    //print_u32(" EE_AB               ", mlx90632.ee_params.ee_ab           );
+    //print_u32(" EE_BA               ", mlx90632.ee_params.ee_ba           );
+    //print_u32(" EE_BB               ", mlx90632.ee_params.ee_bb           );
+    //print_u32(" EE_CA               ", mlx90632.ee_params.ee_ca           );
+    //print_u32(" EE_CB               ", mlx90632.ee_params.ee_cb           );
+    //print_u32(" EE_DA               ", mlx90632.ee_params.ee_da           );
+    //print_u32(" EE_DB               ", mlx90632.ee_params.ee_db           );
+    print_i32(" EE_EA               ", mlx90632.ee_params.ee_ea           );
+    print_i32(" EE_EB               ", mlx90632.ee_params.ee_eb           );
+    print_i32(" EE_FA               ", mlx90632.ee_params.ee_fa           );
+    print_i32(" EE_FB               ", mlx90632.ee_params.ee_fb           );
+    print_i32(" EE_GA               ", mlx90632.ee_params.ee_ga           );
+    delay.delay_ms(100u16);
+    print_i16(" EE_GB               ", mlx90632.ee_params.ee_gb   );
+    print_i16(" EE_KA               ", mlx90632.ee_params.ee_ka   );
+    //print_i16(" EE_KB               ", mlx90632.ee_params.ee_kb   );
+    print_i16(" EE_HA               ", mlx90632.ee_params.ee_ha   );
+    print_i16(" EE_HB               ", mlx90632.ee_params.ee_hb   );
+
+    delay.delay_ms(100u16);
+
     //mlx90632.debug_write_read();
     let info = mlx90632.mlx90632_get_chip_info().unwrap();
-        rprintln!("===== info ====");
 
-        print_u16(" id0                 ", info.id0);
-        print_u16(" id1                 ", info.id1            );
-        print_u16(" id2                 ", info.id2            );
-        print_u16(" id_crc              ", info.id_crc         );
-        print_u16(" ee_product_code     ", info.ee_product_code);
-        print_u16(" ee_version          ", info.ee_version     );
-        print_u32(" EE_P_R              ", info.EE_P_R  );
-        print_u32(" EE_P_G              ", info.EE_P_G  );
-        print_u32(" EE_P_T              ", info.EE_P_T  );
-        print_u32(" EE_P_O              ", info.EE_P_O  );
-        print_u32(" EE_AA               ", info.EE_AA   );
-        print_u32(" EE_AB               ", info.EE_AB   );
-        print_u32(" EE_BA               ", info.EE_BA   );
-        print_u32(" EE_BB               ", info.EE_BB   );
-        print_u32(" EE_CA               ", info.EE_CA   );
-        print_u32(" EE_CB               ", info.EE_CB   );
-        print_u32(" EE_DA               ", info.EE_DA   );
-        print_u32(" EE_DB               ", info.EE_DB   );
-        print_u32(" EE_EA               ", info.EE_EA   );
-        print_u32(" EE_EB               ", info.EE_EB   );
-        print_u32(" EE_FA               ", info.EE_FA   );
-        print_u32(" EE_FB               ", info.EE_FB   );
-        print_u32(" EE_GA               ", info.EE_GA   );
+    rprintln!("===== info ====");
+    print_u16(" id0                 ", info.id0             );
+    print_u16(" id1                 ", info.id1             );
+    print_u16(" id2                 ", info.id2             );
+    print_u16(" id_crc              ", info.id_crc          );
+    print_u16(" ee_product_code     ", info.ee_product_code );
+    print_u16(" ee_version          ", info.ee_version      );
+    delay.delay_ms(500u16);
+    print_u32(" EE_P_R              ", info.ee_p_r          );
+    print_u32(" EE_P_G              ", info.ee_p_g          );
+    print_u32(" EE_P_T              ", info.ee_p_t          );
+    print_u32(" EE_P_O              ", info.ee_p_o          );
+    print_u32(" EE_AA               ", info.ee_aa           );
+    print_u32(" EE_AB               ", info.ee_ab           );
+    print_u32(" EE_BA               ", info.ee_ba           );
+    print_u32(" EE_BB               ", info.ee_bb           );
+    delay.delay_ms(500u16);
+    print_u32(" EE_CA               ", info.ee_ca           );
+    print_u32(" EE_CB               ", info.ee_cb           );
+    print_u32(" EE_DA               ", info.ee_da           );
+    print_u32(" EE_DB               ", info.ee_db           );
+    print_u32(" EE_EA               ", info.ee_ea           );
+    print_u32(" EE_EB               ", info.ee_eb           );
+    print_u32(" EE_FA               ", info.ee_fa           );
+    print_u32(" EE_FB               ", info.ee_fb           );
+    print_u32(" EE_GA               ", info.ee_ga           );
 
-        rprintln!(" ------------- ");
-        //print_u16(" EE_GA  signed         : {} ", (info.EE_GA) as i32);
-        rprintln!(" ------------- ");
+    rprintln!(" ------------- ");
+    //print_u16(" EE_GA  signed         : {} ", (info.EE_GA) as i32);
+    rprintln!(" ------------- ");
 
-        delay.delay_ms(100u16);
+    delay.delay_ms(100u16);
 
-        print_u16(" EE_GB               ", info.EE_GB   );
-        print_u16(" EE_KA               ", info.EE_KA   );
-        print_u16(" EE_KB               ", info.EE_KB   );
-        print_u16(" EE_HA               ", info.EE_HA   );
-        print_u16(" EE_HB               ", info.EE_HB   );
+    print_u16(" EE_GB               ", info.ee_gb   );
+    print_u16(" EE_KA               ", info.ee_ka   );
+    print_u16(" EE_KB               ", info.ee_kb   );
+    print_u16(" EE_HA               ", info.ee_ha   );
+    print_u16(" EE_HB               ", info.ee_hb   );
 
-        delay.delay_ms(100u16);
-
-
-
-        print_u16(" customer_data0      ", info.customer_data0   );
-        print_u16(" customer_data1      ", info.customer_data1   );
-        print_u16(" customer_data2      ", info.customer_data2   );
-        print_u16(" customer_data3      ", info.customer_data3   );
-        print_u16(" customer_data4      ", info.customer_data4   );
-        print_u16(" customer_data5      ", info.customer_data5   );
-        print_u16(" customer_data6      ", info.customer_data6   );
-        print_u16(" customer_data7      ", info.customer_data7   );
-
-        delay.delay_ms(100u16);
+    delay.delay_ms(100u16);
 
 
 
-        print_u16(" EE_CONTROL          ", info.EE_CONTROL            );
-        print_u16(" EE_I2C_ADDRESS      ", info.EE_I2C_ADDRESS        );
-        print_u16(" EE_MEAS_1           ", info.EE_MEAS_1             );
-        print_u16(" EE_MEAS_2           ", info.EE_MEAS_2             );
-        print_u16(" REG_I2C_ADDRESS     ", info.REG_I2C_ADDRESS       );
-        print_u16(" REG_CONTROL         ", info.REG_CONTROL           );
-        print_u16(" REG_STATUS          ", info.REG_STATUS            );
-        delay.delay_ms(100u16);
+    print_u16(" customer_data0      ", info.customer_data0   );
+    print_u16(" customer_data1      ", info.customer_data1   );
+    print_u16(" customer_data2      ", info.customer_data2   );
+    print_u16(" customer_data3      ", info.customer_data3   );
+    print_u16(" customer_data4      ", info.customer_data4   );
+    print_u16(" customer_data5      ", info.customer_data5   );
+    print_u16(" customer_data6      ", info.customer_data6   );
+    print_u16(" customer_data7      ", info.customer_data7   );
+
+    delay.delay_ms(100u16);
 
 
-        print_u16(" RAM_01              ", info.RAM_01                );
-        print_u16(" RAM_02              ", info.RAM_02                );
-        print_u16(" RAM_03              ", info.RAM_03                );
-        print_u16(" RAM_04              ", info.RAM_04                );
-        print_u16(" RAM_05              ", info.RAM_05                );
-        print_u16(" RAM_06              ", info.RAM_06                );
-        print_u16(" RAM_07              ", info.RAM_07                );
-        print_u16(" RAM_08              ", info.RAM_08                );
-        print_u16(" RAM_09              ", info.RAM_09                );
-        print_u16(" RAM_10              ", info.RAM_10                );
-        delay.delay_ms(100u16);
+
+    print_u16(" EE_CONTROL          ", info.ee_control            );
+    print_u16(" EE_I2C_ADDRESS      ", info.ee_i2c_address        );
+    print_u16(" EE_MEAS_1           ", info.ee_meas_1             );
+    print_u16(" EE_MEAS_2           ", info.ee_meas_2             );
+    print_u16(" REG_I2C_ADDRESS     ", info.reg_i2c_address       );
+    print_u16(" REG_CONTROL         ", info.reg_control           );
+    print_u16(" REG_STATUS          ", info.reg_status            );
+    delay.delay_ms(100u16);
 
 
-        print_u16(" RAM_11              ", info.RAM_11                );
-        print_u16(" RAM_12              ", info.RAM_12                );
-        print_u16(" RAM_13              ", info.RAM_13                );
-        print_u16(" RAM_14              ", info.RAM_14                );
-        print_u16(" RAM_15              ", info.RAM_15                );
-        print_u16(" RAM_16              ", info.RAM_16                );
-        print_u16(" RAM_17              ", info.RAM_17                );
-        print_u16(" RAM_18              ", info.RAM_18                );
-        print_u16(" RAM_19              ", info.RAM_19                );
-        print_u16(" RAM_20              ", info.RAM_20                );
-        delay.delay_ms(100u16);
+    print_u16(" RAM_01              ", info.ram_01                );
+    print_u16(" RAM_02              ", info.ram_02                );
+    print_u16(" RAM_03              ", info.ram_03                );
+    print_u16(" RAM_04              ", info.ram_04                );
+    print_u16(" RAM_05              ", info.ram_05                );
+    print_u16(" RAM_06              ", info.ram_06                );
+    print_u16(" RAM_07              ", info.ram_07                );
+    print_u16(" RAM_08              ", info.ram_08                );
+    print_u16(" RAM_09              ", info.ram_09                );
+    print_u16(" RAM_10              ", info.ram_10                );
+    delay.delay_ms(100u16);
 
 
-        print_u16(" RAM_21              ", info.RAM_21                );
-        print_u16(" RAM_22              ", info.RAM_22                );
-        print_u16(" RAM_23              ", info.RAM_23                );
-        print_u16(" RAM_24              ", info.RAM_24                );
-        print_u16(" RAM_25              ", info.RAM_25                );
-        print_u16(" RAM_26              ", info.RAM_26                );
-        print_u16(" RAM_27              ", info.RAM_27                );
-        print_u16(" RAM_28              ", info.RAM_28                );
-        print_u16(" RAM_29              ", info.RAM_29                );
-        print_u16(" RAM_30              ", info.RAM_30                );
-        delay.delay_ms(100u16);
+    print_u16(" RAM_11              ", info.ram_11                );
+    print_u16(" RAM_12              ", info.ram_12                );
+    print_u16(" RAM_13              ", info.ram_13                );
+    print_u16(" RAM_14              ", info.ram_14                );
+    print_u16(" RAM_15              ", info.ram_15                );
+    print_u16(" RAM_16              ", info.ram_16                );
+    print_u16(" RAM_17              ", info.ram_17                );
+    print_u16(" RAM_18              ", info.ram_18                );
+    print_u16(" RAM_19              ", info.ram_19                );
+    print_u16(" RAM_20              ", info.ram_20                );
+    delay.delay_ms(100u16);
 
 
-        print_u16(" RAM_31              ", info.RAM_31                );
-        print_u16(" RAM_32              ", info.RAM_32                );
-        print_u16(" RAM_33              ", info.RAM_33                );
-        print_u16(" RAM_34              ", info.RAM_34                );
-        print_u16(" RAM_35              ", info.RAM_35                );
-        print_u16(" RAM_36              ", info.RAM_36                );
-        print_u16(" RAM_37              ", info.RAM_37                );
-        print_u16(" RAM_38              ", info.RAM_38                );
-        print_u16(" RAM_39              ", info.RAM_39                );
-        delay.delay_ms(100u16);
+    print_u16(" RAM_21              ", info.ram_21                );
+    print_u16(" RAM_22              ", info.ram_22                );
+    print_u16(" RAM_23              ", info.ram_23                );
+    print_u16(" RAM_24              ", info.ram_24                );
+    print_u16(" RAM_25              ", info.ram_25                );
+    print_u16(" RAM_26              ", info.ram_26                );
+    print_u16(" RAM_27              ", info.ram_27                );
+    print_u16(" RAM_28              ", info.ram_28                );
+    print_u16(" RAM_29              ", info.ram_29                );
+    print_u16(" RAM_30              ", info.ram_30                );
+    delay.delay_ms(100u16);
 
 
-        print_u16(" RAM_40              ", info.RAM_40                );
-        print_u16(" RAM_41              ", info.RAM_41                );
-        print_u16(" RAM_42              ", info.RAM_42                );
-        print_u16(" RAM_43              ", info.RAM_43                );
-        print_u16(" RAM_44              ", info.RAM_44                );
-        print_u16(" RAM_45              ", info.RAM_45                );
-        print_u16(" RAM_46              ", info.RAM_46                );
-        print_u16(" RAM_47              ", info.RAM_47                );
-        print_u16(" RAM_48              ", info.RAM_48                );
-        print_u16(" RAM_49              ", info.RAM_49                );
-        print_u16(" RAM_50              ", info.RAM_50                );
-        delay.delay_ms(100u16);
+    print_u16(" RAM_31              ", info.ram_31                );
+    print_u16(" RAM_32              ", info.ram_32                );
+    print_u16(" RAM_33              ", info.ram_33                );
+    print_u16(" RAM_34              ", info.ram_34                );
+    print_u16(" RAM_35              ", info.ram_35                );
+    print_u16(" RAM_36              ", info.ram_36                );
+    print_u16(" RAM_37              ", info.ram_37                );
+    print_u16(" RAM_38              ", info.ram_38                );
+    print_u16(" RAM_39              ", info.ram_39                );
+    delay.delay_ms(100u16);
 
 
-        print_u16(" RAM_51              ", info.RAM_51                );
-        print_u16(" RAM_52              ", info.RAM_52                );
-        print_u16(" RAM_53              ", info.RAM_53                );
-        print_u16(" RAM_54              ", info.RAM_54                );
-        print_u16(" RAM_55              ", info.RAM_55                );
-        print_u16(" RAM_56              ", info.RAM_56                );
-        print_u16(" RAM_57              ", info.RAM_57                );
-        print_u16(" RAM_58              ", info.RAM_58                );
-        print_u16(" RAM_59              ", info.RAM_59                );
-        print_u16(" RAM_60              ", info.RAM_60                );
+    print_u16(" RAM_40              ", info.ram_40                );
+    print_u16(" RAM_41              ", info.ram_41                );
+    print_u16(" RAM_42              ", info.ram_42                );
+    print_u16(" RAM_43              ", info.ram_43                );
+    print_u16(" RAM_44              ", info.ram_44                );
+    print_u16(" RAM_45              ", info.ram_45                );
+    print_u16(" RAM_46              ", info.ram_46                );
+    print_u16(" RAM_47              ", info.ram_47                );
+    print_u16(" RAM_48              ", info.ram_48                );
+    print_u16(" RAM_49              ", info.ram_49                );
+    print_u16(" RAM_50              ", info.ram_50                );
+    delay.delay_ms(100u16);
+
+
+    print_u16(" RAM_51              ", info.ram_51                );
+    print_u16(" RAM_52              ", info.ram_52                );
+    print_u16(" RAM_53              ", info.ram_53                );
+    print_u16(" RAM_54              ", info.ram_54                );
+    print_u16(" RAM_55              ", info.ram_55                );
+    print_u16(" RAM_56              ", info.ram_56                );
+    print_u16(" RAM_57              ", info.ram_57                );
+    print_u16(" RAM_58              ", info.ram_58                );
+    print_u16(" RAM_59              ", info.ram_59                );
+    print_u16(" RAM_60              ", info.ram_60                );
+
+
+    rprintln!("==== mlx90632_start_measurement ===========");
+
+
 
 
     rprintln!("==== mlx90632_start_measurement ===========");
@@ -391,5 +432,13 @@ fn print_u16(label: &str, val: u16) {
 }
 
 fn print_u32(label: &str, val: u32) {
+    rprintln!(" {}    : {:#04x} ", label, val);
+}
+
+fn print_i16(label: &str, val: i16) {
+    rprintln!(" {}    : {:#02x} ", label, val);
+}
+
+fn print_i32(label: &str, val: i32) {
     rprintln!(" {}    : {:#04x} ", label, val);
 }
