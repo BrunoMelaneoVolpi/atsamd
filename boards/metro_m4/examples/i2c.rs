@@ -40,6 +40,7 @@ use rtt_target::{/*rprint,*/ rprintln, rtt_init_print};
 
 use mlx90632::Mlx90632;
 use mlx90632::mlx90632_types::Mlx90632Address;
+use mlx90632::mlx90632_types::AddrPin;
 
 
 
@@ -217,7 +218,8 @@ fn main() -> ! {
 
 
 
-    let i2c_address : Mlx90632Address = Mlx90632Address(0x60);
+    let i2c_address = Mlx90632Address::mlx90632_default_addr(AddrPin::GND);
+
     rprintln!("===== Hertz::from(MLX90632_BAUD).0 :: {:?} ", Hertz::from(MLX90632_BAUD).0);
 
     let mut mlx90632 =
@@ -226,13 +228,26 @@ fn main() -> ! {
                         Hertz::from(MLX90632_BAUD).0,
                         ).unwrap();
 
-    mlx90632.debug_write_read();
+    //mlx90632.debug_write_read();
+    let info = mlx90632.mlx90632_get_chip_info().unwrap();
+        rprintln!("===== info ====");
+        rprintln!(" id0             : {:#02x} ", info.id0            );
+        rprintln!(" id1             : {:#02x} ", info.id1            );
+        rprintln!(" id2             : {:#02x} ", info.id2            );
+        rprintln!(" id_crc          : {:#02x} ", info.id_crc         );
+        rprintln!(" ee_product_code : {:#02x} ", info.ee_product_code);
+        rprintln!(" ee_version      : {:#02x} ", info.ee_version     );
+
+    rprintln!("==== mlx90632_start_measurement ===========");
+    mlx90632.mlx90632_start_measurement();
 
 
 
+    let mut counter : u32 = 0;
     loop {
         delay.delay_ms(1000u16);
-        rprintln!("===== DEMO OVER ====");
+        rprintln!("===== DEMO OVER ==== {}", counter);
+        counter += 1;
     }
 
 
