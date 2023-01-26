@@ -21,7 +21,7 @@ use pac::{CorePeripherals, Peripherals};
 use hal::clock::GenericClockController;
 //use hal::dmac::{DmaController, PriorityLevel};
 //use hal::ehal::blocking::i2c::WriteRead;
-//use hal::prelude::*;
+use hal::prelude::*;        //  <pin>.set_high().unwrap();
 //use hal::sercom::i2c;
 //use hal::time::MegaHertz;
 use hal::time::KiloHertz;
@@ -98,8 +98,11 @@ fn main() -> ! {
     //  Take SDA and SCL
     let (sda,
          scl,
-         _shut_down
-         ) = (pins.pb02, pins.scl, pins.d13);
+         _shut_down,
+         mlx90632_addr,) = (pins.pb02,
+                        pins.scl,
+                        pins.d13,
+                        pins.d12);
 
     /*  Setup I2C interface...  */
     let i2c_sercom = periph_alias!(peripherals.i2c_sercom);
@@ -118,8 +121,8 @@ fn main() -> ! {
 
 
 
-//    /*  Setup Shutdown pin...   */
-//    let mut shut_down = shut_down.into_push_pull_output();
+////    /*  Setup Shutdown pin...   */
+//    let mut shut_down = _shut_down.into_push_pull_output();
 //
 //    /*  Reset device...         */
 //    /*      Shut down...        */
@@ -218,7 +221,14 @@ fn main() -> ! {
 
 
 
+    ////    /*  Setup Shutdown pin...   */
+    let mut mlx90632_addr = mlx90632_addr.into_push_pull_output();
+    mlx90632_addr.set_low().unwrap();
+    delay.delay_ms(10u16);
+    mlx90632_addr.set_high().unwrap();
+
     let i2c_address = Mlx90632Address::mlx90632_default_addr(AddrPin::GND);
+    let i2c_address = Mlx90632Address::alternate_addr(0xAB);//AddrPin::GND);
 
     rprintln!("===== Hertz::from(MLX90632_BAUD).0 :: {:?} ", Hertz::from(MLX90632_BAUD).0);
 
@@ -414,7 +424,7 @@ fn main() -> ! {
 
 
     rprintln!("==== mlx90632_start_measurement ===========");
-    mlx90632.mlx90632_start_measurement();
+    mlx90632.mlx90632_start_measurement().unwrap();
 
 
 
