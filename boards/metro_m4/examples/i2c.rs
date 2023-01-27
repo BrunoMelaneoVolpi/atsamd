@@ -253,10 +253,20 @@ fn main() -> ! {
     rprintln!("===== Hertz::from(MLX90632_BAUD).0 :: {:?} ", Hertz::from(MLX90632_BAUD).0);
 
     rprintln!("===== mlx90632 init ====");
+
+
+    let freed_sys = delay.free();
+
+    let mut mlx_delay = Delay::new(freed_sys, &mut clocks);
+    mlx_delay.delay_ms(100u16);
+
+
     let mlx90632 =
         Mlx90632::new(  i2c,
                         i2c_address,
                         Hertz::from(MLX90632_BAUD).0,
+                        mlx_delay
+
                         );
 
     match mlx90632 {
@@ -267,6 +277,8 @@ fn main() -> ! {
             rprintln!("=====        init Err {:?} ==== ", e);
         }
     }
+
+
 
 
 
@@ -281,8 +293,6 @@ fn main() -> ! {
     rprintln!("  ee_product_code_accuracy_range      : {:?} ", mlx90632.ee_params.ee_product_code_accuracy_range );
     print_u16(" ee_version                      ", mlx90632.ee_params.ee_version      );
     rprintln!("  ee_version_extended_rng_support     : {:?} ", mlx90632.ee_params.ee_version_extended_rng_support );
-
-loop{}//forever
 
     //print_i32(" EE_P_R              ", mlx90632.ee_params.ee_p_r          );
     //print_i32(" EE_P_G              ", mlx90632.ee_params.ee_p_g          );
@@ -439,14 +449,27 @@ loop{}//forever
     //print_u16(" RAM_59              ", info.ram_59                );
     //print_u16(" RAM_60              ", info.ram_60                );
 
-    //rprintln!("==== mlx90632_start_measurement ===========");
-    //mlx90632.mlx90632_start_measurement().unwrap();
+    rprintln!("==== get_temparature =========== ");
+    let temp = mlx90632.get_temparature();
+
+    match temp {
+        Ok(x) => {
+            rprintln!("===== Temp is ({:?}) ", x);
+        },
+        Err(x) => {
+            rprintln!("===== Err getting tempERR({:?}) ", x);
+        }
+    }
+
 
 
     let mut counter : u32 = 0;
     loop {
-        delay.delay_ms(1000u16);
-        rprintln!("===== DEMO OVER ==== {}", counter);
+//        delay.delay_ms(1000u16);
+
+        if (counter%1000000) == 0 {
+            rprintln!("===== DEMO OVER ==== {}", counter);
+        }
         counter += 1;
     }
 }
