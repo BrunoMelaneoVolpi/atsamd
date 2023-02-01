@@ -38,6 +38,8 @@ cortex-m-semihosting = "0.3"
 rtt-target = { version = "0.3.0", features = ["cortex-m"] }
 smart-leds = "0.3"
 
+shared-bus = "0.2.2"    #   necessary to share the I2C bus between several drivers
+
 #   Not yet in Vital'repos... only locally!
 mlx90632 = { path = "../../../../mlx90632-rs" }    #   Not yet in Vital'repos... only locally!
 

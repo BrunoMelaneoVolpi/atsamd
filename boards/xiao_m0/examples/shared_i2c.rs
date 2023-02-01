@@ -35,13 +35,13 @@ fn main() -> ! {
     );
     let i2c_bus = shared_bus::BusManagerSimple::new(i2c);
 
-    let interface = I2CDisplayInterface::new(i2c_bus.acquire_i2c());
+    let interface = I2CDisplayInterface::new(i2c_bus.acquire_i2c());    //  <<<<<<<<<<<<<<  Sharing of the I2C bus!!!!
     let mut display =
         Ssd1306::new(interface, DisplaySize128x64, DisplayRotation::Rotate180).into_terminal_mode();
     display.init().unwrap();
 
     let mut mpu = Mpu6050::new(i2c_bus.acquire_i2c());
-    mpu.init(&mut delay).unwrap();
+    mpu.init(&mut delay).unwrap();          //  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  How the delay can be passed around as a reference!!!!
 
     loop {
         display.clear().unwrap();

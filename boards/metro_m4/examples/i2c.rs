@@ -261,38 +261,36 @@ fn main() -> ! {
     mlx_delay.delay_ms(100u16);
 
 
-    let mlx90632 =
-        Mlx90632::new(  i2c,
-                        i2c_address,
-                        Hertz::from(MLX90632_BAUD).0,
-                        mlx_delay
 
-                        );
+    /*  **************************************************************** */
 
-    match mlx90632 {
-        Ok(_) => {
-            rprintln!("=====        init Ok  ==== ");
-        }
-        Err(ref e) => {
-            rprintln!("=====        init Err {:?} ==== ", e);
-        }
-    }
+    //let mut mlx90632 =
+    //    Mlx90632::new(  i2c,
+    //                    i2c_address,
+    //                    Hertz::from(MLX90632_BAUD).0).unwrap();
+
+    //match mlx90632 {
+    //    Ok(_) => {
+    //        rprintln!("=====        init Ok  ==== ");
+    //    }
+    //    Err(e) => {
+    //        rprintln!("=====        init Err {:?} ==== ", e);
+    //    }
+    //}
+
+    //let mut mlx90632_1 = mlx90632.unwrap();
 
 
+    //print_u16(" id0                             ", mlx90632.ee_params.id0             );
+    //print_u16(" id1                             ", mlx90632.ee_params.id1             );
+    //print_u16(" id2                             ", mlx90632.ee_params.id2             );
+    //print_u16(" id_crc                          ", mlx90632.ee_params.id_crc          );
+    //rprintln!("  ee_product_code_fov                 : {:?} ", mlx90632.ee_params.ee_product_code_fov            );
+    //rprintln!("  ee_product_code_package             : {:?} ", mlx90632.ee_params.ee_product_code_package        );
+    //rprintln!("  ee_product_code_accuracy_range      : {:?} ", mlx90632.ee_params.ee_product_code_accuracy_range );
+    //print_u16(" ee_version                      ", mlx90632.ee_params.ee_version      );
+    //rprintln!("  ee_version_extended_rng_support     : {:?} ", mlx90632.ee_params.ee_version_extended_rng_support );
 
-
-
-    let mut mlx90632 = mlx90632.unwrap();
-
-    print_u16(" id0                             ", mlx90632.ee_params.id0             );
-    print_u16(" id1                             ", mlx90632.ee_params.id1             );
-    print_u16(" id2                             ", mlx90632.ee_params.id2             );
-    print_u16(" id_crc                          ", mlx90632.ee_params.id_crc          );
-    rprintln!("  ee_product_code_fov                 : {:?} ", mlx90632.ee_params.ee_product_code_fov            );
-    rprintln!("  ee_product_code_package             : {:?} ", mlx90632.ee_params.ee_product_code_package        );
-    rprintln!("  ee_product_code_accuracy_range      : {:?} ", mlx90632.ee_params.ee_product_code_accuracy_range );
-    print_u16(" ee_version                      ", mlx90632.ee_params.ee_version      );
-    rprintln!("  ee_version_extended_rng_support     : {:?} ", mlx90632.ee_params.ee_version_extended_rng_support );
 
     //print_i32(" EE_P_R              ", mlx90632.ee_params.ee_p_r          );
     //print_i32(" EE_P_G              ", mlx90632.ee_params.ee_p_g          );
@@ -449,29 +447,98 @@ fn main() -> ! {
     //print_u16(" RAM_59              ", info.ram_59                );
     //print_u16(" RAM_60              ", info.ram_60                );
 
-    rprintln!("==== get_temparature =========== ");
-    let temp = mlx90632.get_temparature();
+    /*  **************************************************************** */
+    /*  **************************************************************** */
+    /*  **************************************************************** */
+    rprintln!("==== shared_bus =========== ");
 
-    match temp {
+    let i2c_address_1 = Mlx90632Address::mlx90632_default_addr(AddrPin::VDD);
+
+    let i2c_bus = shared_bus::BusManagerSimple::new(i2c);
+    //let interface = I2CDisplayInterface::new(i2c_bus.acquire_i2c());    //  <<<<<<<<<<<<<<  Sharing of the I2C bus!!!!
+
+    //  Init sensor 1
+    let i2c_proxy_1 = i2c_bus.acquire_i2c();
+    let mut mlx90632_1 =
+        Mlx90632::new(  i2c_proxy_1,
+                        i2c_address_1,
+                        Hertz::from(MLX90632_BAUD).0);
+    match mlx90632_1 {
+        Ok(_) => {
+            rprintln!("=====        init Ok  ==== ");
+        }
+        Err(ref e) => {
+            rprintln!("=====        init Err {:?} ==== ", e);
+        }
+    }
+    let mut mlx90632_1 = mlx90632_1.unwrap();
+
+
+    //  Simulate sensor 2
+    mlx90632_addr_pin.set_low().unwrap();
+
+    //  Init sensor 2
+    let i2c_address_2 = Mlx90632Address::mlx90632_default_addr(AddrPin::GND);
+
+    let i2c_proxy_2 = i2c_bus.acquire_i2c();
+    let mut mlx90632_2 =
+            Mlx90632::new(  i2c_proxy_2,
+                            i2c_address_2,
+                            Hertz::from(MLX90632_BAUD).0);
+
+
+    match mlx90632_2 {
+        Ok(_) => {
+            rprintln!("=====        init Ok  ==== ");
+        }
+        Err(ref e) => {
+            rprintln!("=====        init Err {:?} ==== ", e);
+        }
+    }
+    let mut mlx90632_2 = mlx90632_2.unwrap();
+
+
+    // Back to sensor 1
+    mlx90632_addr_pin.set_high().unwrap();
+
+    rprintln!("==== get_temperature =========== ");
+
+
+
+
+    match mlx90632_1.get_temparature_extended_mode(&mut mlx_delay) {
         Ok(x) => {
-            rprintln!("===== Temp is ({:?}) ", x);
+            rprintln!("  ===== Temp is {:?} ", x);
         },
         Err(x) => {
-            rprintln!("===== Err getting tempERR({:?}) ", x);
+            rprintln!("  ===== Err getting temp ERR ({:?}) ", x);
         }
     }
-
-
 
     let mut counter : u32 = 0;
-    loop {
-//        delay.delay_ms(1000u16);
 
+    loop {
         if (counter%1000000) == 0 {
-            rprintln!("===== DEMO OVER ==== {}", counter);
+            let temp_1 = mlx90632_1.get_temparature(&mut mlx_delay);
+            let temp_2 = mlx90632_2.get_temparature(&mut mlx_delay);
+            match (temp_1, temp_2) {
+                (Ok(t1), Ok(t2)) => {
+                    rprintln!("  {} ===== Temp1 {:?} :::  Temp2 {:?}", counter, t1, t2);
+                },
+                //Err(x) => {
+                (_e1, _e2) => {
+                    rprintln!("  {} =====  t1 ({:?}) ::::::::: t2 ({:?}) ", counter, _e1, _e2);
+                }
+            }
         }
         counter += 1;
+
+        if counter == 15000000{
+            /*  Error simulation:   Change the sensor address by changing its addr pin...  */
+            mlx90632_addr_pin.set_low().unwrap();
+        }
     }
+
 }
 
 
